@@ -1,4 +1,5 @@
 exclude:
-
     emptydir
     permissions
+exclude_lines:
+    atlauncher-git W: Dependency included and not needed ('openal')

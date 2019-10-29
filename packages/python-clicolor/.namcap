@@ -1,0 +1,2 @@
+exclude_lines:
+    python-clicolor W: Dependency included and not needed ('python')

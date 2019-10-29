@@ -12,7 +12,7 @@ DIST_PATH = 'dist'
 NAME_PATTERN = re.compile(r'[a-zA-Z_][a-zA-Z0-9_]*')
 PKGBUILD_PATTERN = re.compile(r'^([a-zA-Z_][a-zA-Z0-9_]*)=([^\n]+)')
 
-CONFIG_HEADER_PATTERN = re.compile(r'^([a-z]*):$')
+CONFIG_HEADER_PATTERN = re.compile(r'^([a-z_]*):$')
 CONFIG_VALUE_PATTERN = re.compile(r'^\t|    (.*)$')
 
 
@@ -66,22 +66,27 @@ class Package:
         # Run namcap
         exclusion_args = ""
         if namcap_settings['exclude']:
-            exclusion_args = f"-e {','.join(namcap_settings['exclude'])}"
+            exclusion_args = f"-e {','.join(namcap_settings['exclude'])} "
         archive_args = ' '.join(results)
         proc = self.__exec(
-            f"namcap {exclusion_args} {archive_args} PKGBUILD",
+            f"namcap {exclusion_args}{archive_args} PKGBUILD",
             self.get_build_path(),
             capture=True)
 
         # Check namcap didn't warn or error
-        if proc.stdout.decode():
-            print(proc.stdout.decode())
+        output_raw = proc.stdout.decode()
+        output = output_raw.splitlines()
+        output = [o for o in output if
+                  o not in namcap_settings['exclude_lines']]
+        if output:
+            print('\n'.join(output))
             raise Exception("Namcap found issues")
 
     def __read_namcap_settings(self) -> Dict[str, object]:
         # Default
         settings = {
             'exclude': [],
+            'exclude_lines': [],
         }
         path = os.path.join(self.get_package_path(), '.namcap')
 
