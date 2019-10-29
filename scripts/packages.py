@@ -53,7 +53,8 @@ class Package:
             self.get_build_path())
 
     def test(self) -> None:
-        # Assumes files exist in build dir
+        # Assumes files exist in build dir then runs namcap and tries to
+        # install the package
 
         # Read project namcap settings
         namcap_settings = self.__read_namcap_settings()
@@ -62,6 +63,9 @@ class Package:
         glob_str = os.path.join(self.get_build_path(),
                                 f"{self.get_name()}*.pkg.*")
         results = [os.path.basename(r) for r in glob.glob(glob_str)]
+
+        if len(results) != 1:
+            raise Exception(f"Expected only 1 package. Found {len(results)}")
 
         # Run namcap
         exclusion_args = ""
@@ -81,6 +85,10 @@ class Package:
         if output:
             print('\n'.join(output))
             raise Exception("Namcap found issues")
+
+        # Install package
+        cmd = f"yay -U --noconfirm --noprogressbar {results[0]}"
+        self.__exec(cmd, self.get_build_path())
 
     def __read_namcap_settings(self) -> Dict[str, object]:
         # Default
