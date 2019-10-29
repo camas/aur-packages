@@ -92,6 +92,8 @@ def build(
         for name in args.build_names:
             package = PackageManager.get_package(name)
             to_build.append(package)
+    else:
+        parser.error("Need package input")
 
     print(f"{CLI.BOLD}Building {len(to_build)} packages:{CLI.RESET}")
     # Format and print package names
@@ -114,6 +116,8 @@ def prepare(
         for name in args.prep_names:
             package = PackageManager.get_package(name)
             to_prep.append(package)
+    else:
+        parser.error("Need package input")
 
     print(f"{CLI.BOLD}Preparing {len(to_prep)} packages:{CLI.RESET}")
     # Format and print package names
