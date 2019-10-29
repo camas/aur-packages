@@ -47,6 +47,17 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "Test all packages",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/packager.py",
+            "args": [
+                "test",
+                "--all",
+            ],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Clean",
             "type": "python",
             "request": "launch",

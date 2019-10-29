@@ -47,6 +47,13 @@ def main() -> None:
                           help="prepare all packages")
     p_parser.add_argument("prep_names", metavar='package', nargs='*',
                           help="packages to prepare")
+    # Test command
+    TEST_COMMAND = 'test'
+    t_parser = subparsers.add_parser(TEST_COMMAND, help="test package(s)")
+    t_parser.add_argument('--all', action='store_true', dest='test_all',
+                          help="test all packages")
+    t_parser.add_argument("test_names", metavar='package', nargs='*',
+                          help="packages to test")
 
     # Print help if no args
     if len(sys.argv) == 1:
@@ -63,6 +70,7 @@ def main() -> None:
         CLEAN_COMMAND: clean,
         HEADER_COMMAND: header,
         PREP_COMMAND: prepare,
+        TEST_COMMAND: test,
     }
     commands[args.command](parser, args)
 
@@ -127,6 +135,30 @@ def prepare(
     for i, package in enumerate(to_prep, 1):
         print(f"Preparing {i}/{len(to_prep)} {package.get_name()}")
         package.prepare()
+
+
+def test(
+    parser: argparse.ArgumentParser,
+    args: argparse.Namespace,
+) -> None:
+    if args.test_all:
+        to_test = PackageManager.get_packages()
+    elif args.test_names:
+        to_test = []
+        for name in args.test_names:
+            package = PackageManager.get_package(name)
+            to_test.append(package)
+    else:
+        parser.error("Need package input")
+
+    print(f"{CLI.BOLD}Testing {len(to_test)} packages:{CLI.RESET}")
+    # Format and print package names
+    package_list = _wrap_join_list([p.get_name() for p in to_test], padding=2)
+    print(package_list)
+    print()
+    for i, package in enumerate(to_test, 1):
+        print(f"Testing {i}/{len(to_test)} {package.get_name()}")
+        package.test()
 
 
 def clean(
