@@ -21,15 +21,38 @@ class Package:
         self.__read_pkgbuild()
         self.__check_pkgbuild_vars()
 
-    def build(self) -> None:
+    def prepare(self) -> None:
+        # Clear build directory
+        try:
+            shutil.rmtree(self.get_build_path())
+        except FileNotFoundError:
+            pass
+
         # Copy files to build directory
+        print(f"Copying files to {self.get_build_path()}")
         shutil.copytree(self.get_package_path(), self.get_build_path())
 
+        # Create .SRCINFO
+        print(f"Creating .SRCINFO")
+        cmd = "makepkg --printsrcinfo > .SRCINFO"
+        proc = subprocess.run(cmd, shell=True, cwd=self.get_build_path())
+        if proc.returncode != 0:
+            raise Exception("Error creating .SRCINFO")
+
+        # Install dependencies
+        # TODO
+
+    def build(self) -> None:
         # Build package
-        cmd = f"cd {self.get_build_path()} && makepkg --noconfirm --cleanbuild"
-        proc = subprocess.run(cmd, shell=True)
+        print(f"Building package")
+        cmd = "makepkg --noconfirm --cleanbuild"
+        proc = subprocess.run(cmd, shell=True, cwd=self.get_build_path())
         if proc.returncode != 0:
             raise Exception("Makepkg error")
+
+    def test(self) -> None:
+        # Assumes files exist in build dir
+        pass
 
     def __read_pkgbuild(self) -> None:
         # Doesn't read multiline arguments properly
