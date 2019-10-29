@@ -34,10 +34,7 @@ class Package:
 
         # Create .SRCINFO
         print(f"Creating .SRCINFO")
-        cmd = "makepkg --printsrcinfo > .SRCINFO"
-        proc = subprocess.run(cmd, shell=True, cwd=self.get_build_path())
-        if proc.returncode != 0:
-            raise Exception("Error creating .SRCINFO")
+        self.__exec("makepkg --printsrcinfo > .SRCINFO", self.get_build_path())
 
         # Install dependencies
         # TODO
@@ -45,14 +42,17 @@ class Package:
     def build(self) -> None:
         # Build package
         print(f"Building package")
-        cmd = "makepkg --noconfirm --cleanbuild"
-        proc = subprocess.run(cmd, shell=True, cwd=self.get_build_path())
-        if proc.returncode != 0:
-            raise Exception("Makepkg error")
+        self.__exec("makepkg --noconfirm --cleanbuild", self.get_build_path())
 
     def test(self) -> None:
         # Assumes files exist in build dir
         pass
+
+    def __exec(self, cmd: str, directory: str) -> None:
+        print(f"{directory}$ {cmd}")
+        proc = subprocess.run(cmd, shell=True, cwd=directory)
+        if proc.returncode != 0:
+            raise Exception()
 
     def __read_pkgbuild(self) -> None:
         # Doesn't read multiline arguments properly
