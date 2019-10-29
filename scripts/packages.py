@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 import os
 import re
 import shutil
@@ -10,6 +10,9 @@ DIST_PATH = 'dist'
 # https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Definitions
 NAME_PATTERN = re.compile(r'[a-zA-Z_][a-zA-Z0-9_]*')
 PKGBUILD_PATTERN = re.compile(r'^([a-zA-Z_][a-zA-Z0-9_]*)=([^\n]+)')
+
+CONFIG_HEADER_PATTERN = re.compile(r'^([a-z]*):$')
+CONFIG_VALUE_PATTERN = re.compile(r'^\t|    (.*)$')
 
 
 class Package:
@@ -50,7 +53,46 @@ class Package:
 
     def test(self) -> None:
         # Assumes files exist in build dir
+
+        # Read project namcap settings
+        namcap_settings = self.__read_namcap_settings()
+        # Run namcap
         pass
+
+    def __read_namcap_settings(self) -> Dict[str, object]:
+        # Default
+        settings = {
+            'exclude': [],
+        }
+        path = os.path.join(self.get_package_path(), '.namcap')
+
+        if not os.path.exists(path):
+            return settings
+
+        # Read lines
+        with open(path, 'r') as f:
+            lines = f.read().splitlines()
+
+        # Parse
+        cur_setting = None
+        for i, line in enumerate(lines, 1):
+            # Ignore blank lines and comments
+            if not line.strip() or line.strip()[0] == '#':
+                continue
+            # Try match header
+            header_match = CONFIG_HEADER_PATTERN.match(line)
+            if header_match:
+                cur_setting = header_match.group(1)
+                continue
+            # Try match value
+            value_match = CONFIG_VALUE_PATTERN.match(line)
+            if value_match:
+                settings[cur_setting].append(value_match.group(1))
+                continue
+
+            raise Exception(f"Error reading .namcap file at line {i}")
+
+        return settings
 
     def __exec(self, cmd: List[str], directory: str) -> None:
         cmd_str = '" "'.join(cmd)
