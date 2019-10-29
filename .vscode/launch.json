@@ -5,12 +5,33 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Header",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/packager.py",
+            "args": [
+                "header"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "List packages",
             "type": "python",
             "request": "launch",
             "program": "${workspaceRoot}/packager.py",
             "args": [
                 "list"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Prepare all packages",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/packager.py",
+            "args": [
+                "prepare",
+                "--all",
             ],
             "console": "integratedTerminal"
         },

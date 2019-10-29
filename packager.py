@@ -37,6 +37,13 @@ def main() -> None:
     # Header command
     HEADER_COMMAND = 'header'
     subparsers.add_parser(HEADER_COMMAND, help="show header")
+    # Prepare command
+    PREP_COMMAND = 'prepare'
+    p_parser = subparsers.add_parser(PREP_COMMAND, help="prepare package(s)")
+    p_parser.add_argument('--all', action='store_true', dest='prep_all',
+                          help="prepare all packages")
+    p_parser.add_argument("prep_names", metavar='package', nargs='*',
+                          help="packages to prepare")
 
     # Print help if no args
     if len(sys.argv) == 1:
@@ -52,6 +59,7 @@ def main() -> None:
         BUILD_COMMAND: build,
         CLEAN_COMMAND: clean,
         HEADER_COMMAND: header,
+        PREP_COMMAND: prepare,
     }
     commands[args.command](parser, args)
 
@@ -87,19 +95,31 @@ def build(
     package_list = _wrap_join_list([p.get_name() for p in to_build], padding=2)
     print(package_list)
     print()
-
-    # Clear build folder
-    print("Clearing build folder... ", end='')
-    try:
-        _clean_folder(BUILD_PATH)
-    except Exception as e:
-        print("Error: ", e)
-        raise e
-    print("Done")
-
     for i, package in enumerate(to_build, 1):
         print(f"Building {i}/{len(to_build)} {package.get_name()}")
         package.build()
+
+
+def prepare(
+    parser: argparse.ArgumentParser,
+    args: argparse.Namespace,
+) -> None:
+    if args.prep_all:
+        to_prep = PackageManager.get_packages()
+    elif args.prep_names:
+        to_prep = []
+        for name in args.prep_names:
+            package = PackageManager.get_package(name)
+            to_prep.append(package)
+
+    print(f"{CLI.BOLD}Preparing {len(to_prep)} packages:{CLI.RESET}")
+    # Format and print package names
+    package_list = _wrap_join_list([p.get_name() for p in to_prep], padding=2)
+    print(package_list)
+    print()
+    for i, package in enumerate(to_prep, 1):
+        print(f"Preparing {i}/{len(to_prep)} {package.get_name()}")
+        package.prepare()
 
 
 def clean(
