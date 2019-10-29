@@ -16,6 +16,9 @@ CLEAN_SAFE = ['.gitignore', 'README']
 
 
 def main() -> None:
+    # Don't show traceback
+    sys.tracebacklimit = 0
+
     # Set up parser
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(
