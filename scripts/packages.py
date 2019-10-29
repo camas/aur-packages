@@ -3,6 +3,7 @@ import os
 import re
 import shutil
 import subprocess
+import glob
 
 PACKAGES_PATH = 'packages'
 BUILD_PATH = 'build'
@@ -37,7 +38,7 @@ class Package:
 
         # Create .SRCINFO
         print(f"Creating .SRCINFO")
-        self.__exec_shell(
+        self.__exec(
             "makepkg --printsrcinfo > .SRCINFO",
             self.get_build_path())
 
@@ -48,7 +49,7 @@ class Package:
         # Build package
         print(f"Building package")
         self.__exec(
-            "makepkg --noconfirm --cleanbuild".split(' '),
+            "makepkg --noconfirm --cleanbuild",
             self.get_build_path())
 
     def test(self) -> None:
@@ -56,8 +57,26 @@ class Package:
 
         # Read project namcap settings
         namcap_settings = self.__read_namcap_settings()
+
+        # Find package files
+        glob_str = os.path.join(self.get_build_path(),
+                                f"{self.get_name()}*.pkg.*")
+        results = [os.path.basename(r) for r in glob.glob(glob_str)]
+
         # Run namcap
-        pass
+        exclusion_args = ""
+        if namcap_settings['exclude']:
+            exclusion_args = f"-e {','.join(namcap_settings['exclude'])}"
+        archive_args = ' '.join(results)
+        proc = self.__exec(
+            f"namcap {exclusion_args} {archive_args} PKGBUILD",
+            self.get_build_path(),
+            capture=True)
+
+        # Check namcap didn't warn or error
+        if proc.stdout.decode():
+            print(proc.stdout.decode())
+            raise Exception("Namcap found issues")
 
     def __read_namcap_settings(self) -> Dict[str, object]:
         # Default
@@ -94,18 +113,14 @@ class Package:
 
         return settings
 
-    def __exec(self, cmd: List[str], directory: str) -> None:
-        cmd_str = '" "'.join(cmd)
-        print(f"{directory}$ \"{cmd_str}\"")
-        proc = subprocess.run(cmd, cwd=directory)
-        if proc.returncode != 0:
-            raise Exception()
-
-    def __exec_shell(self, cmd: str, directory: str) -> None:
+    def __exec(self, cmd: str, directory: str, capture: bool = False
+               ) -> subprocess.CompletedProcess:
         print(f"{directory}$ {cmd}")
-        proc = subprocess.run(cmd, shell=True, cwd=directory)
+        proc = subprocess.run(cmd, shell=True, cwd=directory,
+                              capture_output=capture)
         if proc.returncode != 0:
             raise Exception()
+        return proc
 
     def __read_pkgbuild(self) -> None:
         # Doesn't read multiline arguments properly
