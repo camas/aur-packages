@@ -162,6 +162,12 @@ def header(
         print(line.center(LINE_WIDTH, ' '))
     print()
 
+    package_names = [p.get_name() for p in PackageManager.get_packages()]
+    package_list = _wrap_join_list(package_names).splitlines()
+    for line in package_list:
+        print(line.center(LINE_WIDTH, ' '))
+    print()
+
 
 def _exec_output(cmd: List[str]) -> List[str]:
     result = subprocess.run(cmd, capture_output=True, check=True)
