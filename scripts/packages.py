@@ -34,7 +34,9 @@ class Package:
 
         # Create .SRCINFO
         print(f"Creating .SRCINFO")
-        self.__exec("makepkg --printsrcinfo > .SRCINFO", self.get_build_path())
+        self.__exec_shell(
+            "makepkg --printsrcinfo > .SRCINFO",
+            self.get_build_path())
 
         # Install dependencies
         # TODO
@@ -42,13 +44,22 @@ class Package:
     def build(self) -> None:
         # Build package
         print(f"Building package")
-        self.__exec("makepkg --noconfirm --cleanbuild", self.get_build_path())
+        self.__exec(
+            "makepkg --noconfirm --cleanbuild".split(' '),
+            self.get_build_path())
 
     def test(self) -> None:
         # Assumes files exist in build dir
         pass
 
-    def __exec(self, cmd: str, directory: str) -> None:
+    def __exec(self, cmd: List[str], directory: str) -> None:
+        cmd_str = '" "'.join(cmd)
+        print(f"{directory}$ \"{cmd_str}\"")
+        proc = subprocess.run(cmd, cwd=directory)
+        if proc.returncode != 0:
+            raise Exception()
+
+    def __exec_shell(self, cmd: str, directory: str) -> None:
         print(f"{directory}$ {cmd}")
         proc = subprocess.run(cmd, shell=True, cwd=directory)
         if proc.returncode != 0:
