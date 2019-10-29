@@ -1,0 +1,39 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "List packages",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/packager.py",
+            "args": [
+                "list"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Build all packages",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/packager.py",
+            "args": [
+                "build",
+                "--all",
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Clean",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/packager.py",
+            "args": [
+                "clean",
+            ],
+            "console": "integratedTerminal"
+        },
+    ]
+}
