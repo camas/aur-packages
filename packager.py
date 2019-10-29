@@ -2,9 +2,10 @@
 
 import argparse
 import sys
-from typing import Iterable
+from typing import Iterable, List
 import os
 import shutil
+import subprocess
 
 from clicolor.cli import CLI
 
@@ -15,20 +16,6 @@ CLEAN_SAFE = ['.gitignore', 'README']
 
 
 def main() -> None:
-    # Print header
-    tag = [
-        f"Camas' AUR Packager",
-        "Builds, tests and deploys pacman packages",
-        "https://github.com/camas/aur-packages/",
-    ]
-    print()
-    for i, line in enumerate(tag):
-        if i == 0:
-            print(f"{CLI.BOLD}{line.center(LINE_WIDTH, ' ')}{CLI.RESET}")
-            continue
-        print(line.center(LINE_WIDTH, ' '))
-    print()
-
     # Set up parser
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(
@@ -47,6 +34,9 @@ def main() -> None:
     CLEAN_COMMAND = 'clean'
     subparsers.add_parser(CLEAN_COMMAND,
                           help="clean build artifacts and the like")
+    # Header command
+    HEADER_COMMAND = 'header'
+    subparsers.add_parser(HEADER_COMMAND, help="show header")
 
     # Print help if no args
     if len(sys.argv) == 1:
@@ -61,6 +51,7 @@ def main() -> None:
         LIST_COMMAND: list_packages,
         BUILD_COMMAND: build,
         CLEAN_COMMAND: clean,
+        HEADER_COMMAND: header,
     }
     commands[args.command](parser, args)
 
@@ -125,6 +116,37 @@ def clean(
     except Exception as e:
         print("Error: ", e)
         raise e
+
+
+def header(
+    parser: argparse.ArgumentParser,
+    args: argparse.Namespace,
+) -> None:
+    tag = [
+        f"Camas' AUR Packager",
+        "",
+        "Builds, tests and deploys pacman packages",
+        "https://github.com/camas/aur-packages/",
+        "",
+    ]
+    git_branch = _exec_output("git rev-parse --abbrev-ref HEAD".split(' '))[0]
+    git_hash = _exec_output("git rev-list -n 1 HEAD".split(' '))[0][:8]
+    git_commits = _exec_output("git rev-list --count HEAD".split(' '))[0]
+    tag.append(f"{git_branch} | {git_hash} | {git_commits} commits")
+
+    print()
+    for i, line in enumerate(tag):
+        if i == 0:
+            print(f"{CLI.BOLD}{line.center(LINE_WIDTH, ' ')}{CLI.RESET}")
+            continue
+        print(line.center(LINE_WIDTH, ' '))
+    print()
+
+
+def _exec_output(cmd: List[str]) -> List[str]:
+    result = subprocess.run(cmd, capture_output=True, check=True)
+    lines = result.stdout.decode().splitlines()
+    return [l.rstrip() for l in lines]
 
 
 def _clean_folder(path: str) -> None:
