@@ -12,7 +12,7 @@ curl -s "https://www.archlinux.org/mirrorlist/?country=US&protocol=https&use_mir
     | ./.travis/rankmirrors -n 5 - > ./.travis/aur-ci-img/mirrorlist
 
 # Build and upload image
-docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-docker build -t aur-ci ./.travis/aur-ci-img
-docker tag aur-ci "$DOCKER_USERNAME"/aur-ci
-docker push "$DOCKER_USERNAME"/aur-ci
+docker login -u "camas" -p "$DOCKER_PASSWORD"
+docker build -t aur-ci -f ./.travis/aur-ci-img/Dockerfile .
+docker tag aur-ci camas/aur-ci
+docker push camas/aur-ci
