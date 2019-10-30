@@ -10,7 +10,7 @@ COPY mirrorlist /etc/pacman.d/mirrorlist
 RUN pacman-key --init && \
     pacman -Syyu --noconfirm && \
     pacman -S --noconfirm base-devel && \
-    pacman -S git && \
+    pacman -S --noconfirm git && \
     git clone https://aur.archlinux.org/yay.git && \
     cd yay && \
     makepkg -si && \
