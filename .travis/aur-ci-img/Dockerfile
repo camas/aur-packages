@@ -16,3 +16,5 @@ RUN pacman-key --init && \
     makepkg -si && \
     cd ../ && \
     rm -rf yay
+
+USER builduser
