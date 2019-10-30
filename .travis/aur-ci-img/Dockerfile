@@ -2,7 +2,7 @@
 FROM archlinux/base:latest
 
 # Init pacman and install git
-COPY mirrorlist /etc/pacman.d/mirrorlist
+COPY ./.travis/aur-ci-img/mirrorlist /etc/pacman.d/mirrorlist
 RUN pacman-key --init && \
     pacman -Syyu --noconfirm && \
     pacman -S --noconfirm --needed base-devel && \

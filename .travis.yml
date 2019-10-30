@@ -1,11 +1,27 @@
+# Minimal ubuntu VM
 os: linux
 dist: bionic
 language: minimal
 
+# Docker used in every job
 services:
   - docker
 
+# Make docker image creation the first stage
+stages:
+  - image
+  - test
+
+# Use matrix expansion to create package jobs
+env:
+  - PACKAGE=atlauncher-git
+  - PACKAGE=python-clicolor
+
+# test stage script
+script: ./.travis/test_package.sh
+
+# Add docker image stage
 jobs:
   include:
-    - stage: build arch docker image
+    - stage: image
       script: ./.travis/build_docker.sh
