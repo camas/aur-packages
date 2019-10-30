@@ -6,6 +6,9 @@ set -x
 # Fail immediately on error 
 set -e
 
+# Make build folder world writeable
+chmod -R 777 build
+
 # Run docker container
 # Mounts repo to /aur-packages and runs test_package_internal.sh
 docker run -it \
