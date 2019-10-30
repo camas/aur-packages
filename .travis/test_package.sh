@@ -8,7 +8,7 @@ set -e
 
 # Run docker container
 # Mounts repo to /aur-packages and runs test_package_internal.sh
-docker run -it --rm \
+docker run -it \
     -v "$PWD":/aur-packages \
     camas/aur-ci \
     aur-packages/.travis/test_package_internal.sh "$PACKAGE"
