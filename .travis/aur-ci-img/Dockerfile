@@ -26,4 +26,4 @@ RUN echo "builduser ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builduser
 USER builduser
 
 # Install python for package script
-RUN yay -S --noconfirm --needed python python-clicolor
+RUN yay -S --noconfirm --needed python python-clicolor pacman-contrib
