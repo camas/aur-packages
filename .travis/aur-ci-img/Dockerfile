@@ -22,8 +22,8 @@ RUN rm -rf yay*
 RUN useradd -ms /bin/bash builduser
 RUN echo "builduser ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builduser
 
-# Install python for package script
-RUN yay -S --noconfirm --needed python python-clicolor
-
 # Set user to build user
 USER builduser
+
+# Install python for package script
+RUN yay -S --noconfirm --needed python python-clicolor
