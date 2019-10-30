@@ -12,4 +12,4 @@ docker run -it \
     -v "$PWD":/aur-packages \
     -w /aur-packages \
     camas/aur-ci \
-    aur-packages/.travis/test_package_internal.sh "$PACKAGE"
+    /aur-packages/.travis/test_package_internal.sh "$PACKAGE"
