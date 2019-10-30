@@ -25,3 +25,4 @@ jobs:
   include:
     - stage: image
       script: ./.travis/build_docker.sh
+      env:
