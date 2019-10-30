@@ -132,7 +132,7 @@ class Package:
         proc = subprocess.run(cmd, shell=True, cwd=directory,
                               capture_output=capture)
         if proc.returncode != 0:
-            raise Exception()
+            raise Exception(f"Returned error code {proc.returncode}")
         return proc
 
     def __read_pkgbuild(self) -> None:
