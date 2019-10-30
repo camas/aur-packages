@@ -1,0 +1,11 @@
+os: linux
+dist: bionic
+language: minimal
+
+services:
+  - docker
+
+jobs:
+  include:
+    - stage: build arch docker image
+      script: ./.travis/build_docker.sh
