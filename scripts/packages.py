@@ -66,7 +66,7 @@ class Package:
             "makepkg --noconfirm --cleanbuild",
             self.get_build_path())
 
-    def test(self) -> None:
+    def test(self, install: bool = True) -> None:
         # Assumes files exist in build dir then runs namcap and tries to
         # install the package
 
@@ -101,8 +101,9 @@ class Package:
             raise Exception("Namcap found issues")
 
         # Install package
-        cmd = f"yay -U --noconfirm --noprogressbar {results[0]}"
-        self.__exec(cmd, self.get_build_path())
+        if install:
+            cmd = f"yay -U --noconfirm --noprogressbar {results[0]}"
+            self.__exec(cmd, self.get_build_path())
 
     def __read_namcap_settings(self) -> Dict[str, object]:
         # Default

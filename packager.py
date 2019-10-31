@@ -52,6 +52,9 @@ def main() -> None:
     t_parser = subparsers.add_parser(TEST_COMMAND, help="test package(s)")
     t_parser.add_argument('--all', action='store_true', dest='test_all',
                           help="test all packages")
+    t_parser.add_argument('--no-install', action='store_true',
+                          dest='test_no_install',
+                          help="test all packages")
     t_parser.add_argument("test_names", metavar='package', nargs='*',
                           help="packages to test")
 
@@ -158,7 +161,7 @@ def test(
     print()
     for i, package in enumerate(to_test, 1):
         print(f"Testing {i}/{len(to_test)} {package.get_name()}")
-        package.test()
+        package.test(install=not args.test_no_install)
 
 
 def clean(
