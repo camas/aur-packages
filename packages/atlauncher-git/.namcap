@@ -1,5 +1,5 @@
-exclude:
-    emptydir
-    permissions
 exclude_lines:
+    atlauncher-git W: Directory (usr/share/atlauncher/Downloads) is empty
+    atlauncher-git W: File (usr/share/atlauncher/Downloads) has the world writable bit set.
+    atlauncher-git E: Dependency bash detected and not included (programs ['sh'] needed in scripts ['usr/bin/atlauncher'])
     atlauncher-git W: Dependency included and not needed ('openal')
