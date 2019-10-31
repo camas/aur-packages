@@ -5,6 +5,8 @@ import shutil
 import subprocess
 import glob
 
+from scripts.srcinfo import SRCINFO
+
 PACKAGES_PATH = 'packages'
 BUILD_PATH = 'build'
 DIST_PATH = 'dist'
@@ -42,8 +44,20 @@ class Package:
             "makepkg --printsrcinfo > .SRCINFO",
             self.get_build_path())
 
+        # Parse .SRCINFO
+        srcinfo = SRCINFO(os.path.join(self.get_build_path(), '.SRCINFO'))
+
         # Install dependencies
-        # TODO
+        deps = srcinfo._base.get('depends', [])
+        make_deps = srcinfo._base.get('makedepends', [])
+        check_deps = srcinfo._base.get('checkdepends', [])
+        all_deps = deps + make_deps + check_deps
+        if len(all_deps) > 0:
+            print(f"Installing {len(all_deps)} dependencies")
+            dep_str = '"' + '" "'.join(all_deps) + '"'
+            self.__exec(f"yay -S --asdeps --noconfirm --needed {dep_str}", '.')
+        else:
+            print("No dependencies to install")
 
     def build(self) -> None:
         # Build package
