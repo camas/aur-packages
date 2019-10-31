@@ -1,0 +1,2 @@
+exclude_lines:
+    python-setuptools-git-ver W: Dependency included and not needed ('python-setuptools')
