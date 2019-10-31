@@ -15,7 +15,11 @@ stages:
 # Use matrix expansion to create package jobs
 env:
   - PACKAGE=atlauncher-git
+  - PACKAGE=pdlist-git
   - PACKAGE=python-clicolor
+  - PACKAGE=python-dnsdumpster-api-git
+  - PACKAGE=python-od
+  - PACKAGE=python-setuptools-git-ver
 
 # test stage script
 script: ./.travis/test_package.sh
