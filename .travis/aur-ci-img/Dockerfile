@@ -1,12 +1,11 @@
 # Use latest arch base
 FROM archlinux/base:latest
 
-# Init pacman and install git
+# Init pacman and install needed packages
 COPY ./.travis/aur-ci-img/mirrorlist /etc/pacman.d/mirrorlist
 RUN pacman-key --init && \
     pacman -Syyu --noconfirm && \
-    pacman -S --noconfirm --needed base-devel && \
-    pacman -S --noconfirm git
+    pacman -S --noconfirm --needed base-devel git python namcap
 
 # Install yay
 RUN curl -s https://api.github.com/repos/Jguer/yay/releases/latest | \
@@ -14,16 +13,16 @@ RUN curl -s https://api.github.com/repos/Jguer/yay/releases/latest | \
     cut -d : -f 2,3 | \
     tr -d '"' | \
     xargs curl -JL | \
-    tar xfz -
-RUN mv yay*/yay /usr/local/bin/yay
-RUN rm -rf yay*
+    tar xfz - && \
+    mv yay*/yay /usr/local/bin/yay && \
+    rm -rf yay*
 
 # Add build user with sudo rights
-RUN useradd -ms /bin/bash builduser
-RUN echo "builduser ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builduser
+RUN useradd -ms /bin/bash builduser && \
+    echo "builduser ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builduser
 
 # Set user to build user
 USER builduser
 
-# Install python for package script
-RUN yay -S --noconfirm --needed python python-clicolor namcap
+# Install yay packages
+RUN yay -S --noconfirm --needed python-clicolor
