@@ -48,7 +48,7 @@ def main() -> None:
         if name == 'latest':
             continue
 
-        if diff.total_seconds() / (60 * 60) < 3:
+        if diff.total_seconds() / (60 * 60) < 25:
             continue
 
         print(f"Deleting tag {name}")
