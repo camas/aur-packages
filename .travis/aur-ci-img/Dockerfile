@@ -10,7 +10,7 @@ RUN curl -s "https://www.archlinux.org/mirrorlist/?country=US&protocol=https&use
 # Init pacman and install base dev packages
 RUN pacman-key --init && \
     pacman -Syyu --noconfirm && \
-    pacman -S --noconfirm --needed base-devel
+    pacman -S --noconfirm --needed base-devel git
 
 # Install yay
 RUN curl -s https://api.github.com/repos/Jguer/yay/releases/latest | \
