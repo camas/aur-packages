@@ -25,5 +25,5 @@ RUN useradd -ms /bin/bash builduser && \
 USER builduser
 
 # Install packages needed to run the packager
-RUN yay -Syu && \
+RUN yay -Syu --noconfirm && \
     yay -S --noconfirm --needed python-clicolor git namcap
