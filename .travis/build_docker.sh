@@ -13,10 +13,18 @@ curl -s "https://www.archlinux.org/mirrorlist/?country=US&protocol=https&use_mir
 
 # Login to docker
 docker login -u "camas" -p "$DOCKER_PASSWORD"
-# Pull latest version to make use of cached steps
-docker pull camas/aur-ci:latest
-# Build
-docker build -t aur-ci -f ./.travis/aur-ci-img/Dockerfile .
+
+if [[ "$TRAVIS_EVENT_TYPE" == 'cron' ]]
+then
+    # Full build of image
+    docker build -t aur-ci -f ./.travis/aur-ci-img/Dockerfile .
+else
+    # Build using cache
+    docker pull camas/aur-ci:latest
+    docker build -t aur-ci -f ./.travis/aur-ci-img/Dockerfile \
+        --cache-from camas/aur-ci:latest .
+fi
+
 # Tag and push
 docker tag aur-ci camas/aur-ci:latest
 docker tag aur-ci camas/aur-ci:"$TRAVIS_BUILD_ID"
