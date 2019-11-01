@@ -11,7 +11,6 @@ def main() -> None:
     def query_api(endpoint: str, data: Dict = None, delete: bool = False
                   ) -> requests.Request:
         headers = {}
-        #headers = {'Content-Type': 'application/json'}
         if token:
             headers['Authorization'] = f'JWT {token}'
 
