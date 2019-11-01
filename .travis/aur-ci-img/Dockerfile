@@ -1,8 +1,12 @@
 # Use latest arch base
 FROM archlinux/base:latest
 
+COPY ./.travis/rankmirrors /usr/local/bin/rankmirrors
+RUN curl -s "https://www.archlinux.org/mirrorlist/?country=US&protocol=https&use_mirror_status=on" \
+    | sed -e 's/^#Server/Server/' -e '/^#/d' \
+    | rankmirrors -n 5 - > /etc/pacman.d/mirrorlist
+
 # Init pacman and install base dev packages
-COPY ./.travis/aur-ci-img/mirrorlist /etc/pacman.d/mirrorlist
 RUN pacman-key --init && \
     pacman -Syyu --noconfirm && \
     pacman -S --noconfirm --needed base-devel
