@@ -14,5 +14,5 @@ chmod -R 777 build
 docker run -it \
     -v "$PWD":/aur-packages \
     -w /aur-packages \
-    camas/aur-ci \
+    camas/aur-ci:"$TRAVIS_BUILD_ID" \
     /aur-packages/.travis/test_package_internal.sh "$PACKAGE"

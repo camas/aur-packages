@@ -14,5 +14,5 @@ curl -s "https://www.archlinux.org/mirrorlist/?country=US&protocol=https&use_mir
 # Build and upload image
 docker login -u "camas" -p "$DOCKER_PASSWORD"
 docker build -t aur-ci -f ./.travis/aur-ci-img/Dockerfile .
-docker tag aur-ci camas/aur-ci
+docker tag aur-ci camas/aur-ci:"$TRAVIS_BUILD_ID"
 docker push camas/aur-ci
