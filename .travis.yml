@@ -37,6 +37,6 @@ jobs:
       language: python
       python: 3.7
       install: pip install requests python-dateutil
-      script: ./.travis/delete_old.py
+      script: python ./.travis/delete_old.py
       services:
       env:
