@@ -17,6 +17,7 @@ env:
   - PACKAGE=atlauncher-git
   - PACKAGE=pdlist-git
   - PACKAGE=python-clicolor
+  - PACKAGE=python-clicolor-git
   - PACKAGE=python-dnsdumpster-api-git
   - PACKAGE=python-od
   - PACKAGE=python-setuptools-git-ver
