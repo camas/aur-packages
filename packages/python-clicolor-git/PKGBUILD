@@ -1,0 +1,28 @@
+# Maintainer: Camas Millar <camas at hotmail dot co dot uk>
+
+pkgname=python-clicolor-git
+pkgver=1.0.7
+pkgrel=1
+pkgdesc="Quick python reference for terminal color escape codes"
+arch=('any')
+url="https://github.com/camas/clicolors"
+license=('MIT')
+depends=('python') 
+makedepends=('git' 'python-setuptools')
+provides=('python-clicolor')
+conflicts=('python-clicolor')
+
+source=("git+https://github.com/camas/clicolor.git")
+sha256sums=('SKIP')
+
+build() {
+    cd "$srcdir/clicolor"
+    python setup.py build
+}
+
+package() {
+    cd "$srcdir/clicolor"
+    python setup.py install --root="$pkgdir/" --optimize=1 --skip-build
+    install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}
+

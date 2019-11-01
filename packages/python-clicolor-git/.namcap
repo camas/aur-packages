@@ -1,0 +1,2 @@
+exclude_lines:
+    python-clicolor-git W: Dependency included and not needed ('python')
