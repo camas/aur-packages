@@ -25,9 +25,18 @@ env:
 # test stage script
 script: ./.travis/test_package.sh
 
-# Add docker image stage
+# Other jobs
 jobs:
   include:
+    # Build docker image for other jobs
     - stage: image
       script: ./.travis/build_docker.sh
+      env:
+    # Delete old docker images
+    - stage: image
+      language: python
+      python: 3.7
+      install: pip install requests python-dateutil
+      script: ./.travis/delete_old.py
+      services:
       env:

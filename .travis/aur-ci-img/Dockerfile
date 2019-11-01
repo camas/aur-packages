@@ -1,6 +1,7 @@
 # Use latest arch base
 FROM archlinux/base:latest
 
+# Generate mirrorlist
 COPY ./.travis/rankmirrors /usr/local/bin/rankmirrors
 RUN curl -s "https://www.archlinux.org/mirrorlist/?country=US&protocol=https&use_mirror_status=on" \
     | sed -e 's/^#Server/Server/' -e '/^#/d' \
