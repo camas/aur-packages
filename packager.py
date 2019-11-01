@@ -217,7 +217,7 @@ def full(
         print(f"Building {i}/{len(to_do)} {package.get_name()}")
         package.build()
         print(f"Testing {i}/{len(to_do)} {package.get_name()}")
-        package.test()
+        package.test(ci=True)
 
 
 def header(

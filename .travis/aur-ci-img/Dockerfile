@@ -31,4 +31,4 @@ USER builduser
 
 # Install packages needed to run the packager
 RUN yay -Syu --noconfirm && \
-    yay -S --noconfirm --needed python-clicolor git namcap
+    yay -S --noconfirm --needed python-clicolor

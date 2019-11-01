@@ -50,7 +50,7 @@ class Package:
         # CI specific stuff
         if ci:
             # Uninstall all packages that were needed to run this script
-            self.__exec("yay -Rs --noconfirm python-clicolor git", '.')
+            self.__exec("yay -Rs --noconfirm python-clicolor", '.')
 
         # Install dependencies
         deps = srcinfo._base.get('depends', [])
@@ -71,7 +71,7 @@ class Package:
             "makepkg --noconfirm --cleanbuild",
             self.get_build_path())
 
-    def test(self, install: bool = True) -> None:
+    def test(self, install: bool = True, ci: bool = False) -> None:
         # Assumes files exist in build dir then runs namcap and tries to
         # install the package
 
@@ -85,6 +85,11 @@ class Package:
 
         if len(results) != 1:
             raise Exception(f"Expected only 1 package. Found {len(results)}")
+
+        # CI specific stuff
+        if ci:
+            # Install namcap
+            self.__exec("yay -S --noconfirm --needed namcap", '.')
 
         # Run namcap
         exclusion_args = ""
