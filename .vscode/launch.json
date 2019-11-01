@@ -65,6 +65,17 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "Full all packages",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/packager.py",
+            "args": [
+                "full",
+                "--all",
+            ],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Clean",
             "type": "python",
             "request": "launch",

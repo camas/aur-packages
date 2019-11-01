@@ -16,6 +16,4 @@ fi
 python packager.py header
 
 # Prep/build/test package
-python packager.py prepare "$1"
-python packager.py build "$1"
-python packager.py test "$1"
+python packager.py full --ci "$1"

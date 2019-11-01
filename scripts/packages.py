@@ -27,7 +27,7 @@ class Package:
         self.__read_pkgbuild()
         self.__check_pkgbuild_vars()
 
-    def prepare(self) -> None:
+    def prepare(self, ci: bool = False) -> None:
         # Clear build directory
         try:
             shutil.rmtree(self.get_build_path())
@@ -46,6 +46,11 @@ class Package:
 
         # Parse .SRCINFO
         srcinfo = SRCINFO(os.path.join(self.get_build_path(), '.SRCINFO'))
+
+        # CI specific stuff
+        if ci:
+            # Uninstall all packages that were needed to run this script
+            self.__exec("yay -Rs --noconfirm python-clicolor git", '.')
 
         # Install dependencies
         deps = srcinfo._base.get('depends', [])

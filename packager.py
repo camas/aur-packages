@@ -54,9 +54,20 @@ def main() -> None:
                           help="test all packages")
     t_parser.add_argument('--no-install', action='store_true',
                           dest='test_no_install',
-                          help="test all packages")
+                          help="Don't install when testing")
     t_parser.add_argument("test_names", metavar='package', nargs='*',
                           help="packages to test")
+
+    # Full command
+    FULL_COMMAND = 'full'
+    t_parser = subparsers.add_parser(FULL_COMMAND,
+                                     help="run all tasks on package(s)")
+    t_parser.add_argument('--all', action='store_true', dest='full_all',
+                          help="use all packages")
+    t_parser.add_argument('--ci', action='store_true', dest='full_ci',
+                          help="CI specific option")
+    t_parser.add_argument("full_names", metavar='package', nargs='*',
+                          help="packages to use")
 
     # Print help if no args
     if len(sys.argv) == 1:
@@ -74,6 +85,7 @@ def main() -> None:
         HEADER_COMMAND: header,
         PREP_COMMAND: prepare,
         TEST_COMMAND: test,
+        FULL_COMMAND: full,
     }
     commands[args.command](parser, args)
 
@@ -178,6 +190,34 @@ def clean(
     except Exception as e:
         print("Error: ", e)
         raise e
+
+
+def full(
+    parser: argparse.ArgumentParser,
+    args: argparse.Namespace,
+) -> None:
+    if args.full_all:
+        to_do = PackageManager.get_packages()
+    elif args.full_names:
+        to_do = []
+        for name in args.full_names:
+            package = PackageManager.get_package(name)
+            to_do.append(package)
+    else:
+        parser.error("Need package input")
+
+    print(f"{CLI.BOLD}Testing {len(to_do)} packages:{CLI.RESET}")
+    # Format and print package names
+    package_list = _wrap_join_list([p.get_name() for p in to_do], padding=2)
+    print(package_list)
+    print()
+    for i, package in enumerate(to_do, 1):
+        print(f"Preparing {i}/{len(to_do)} {package.get_name()}")
+        package.prepare(ci=True)
+        print(f"Building {i}/{len(to_do)} {package.get_name()}")
+        package.build()
+        print(f"Testing {i}/{len(to_do)} {package.get_name()}")
+        package.test()
 
 
 def header(
