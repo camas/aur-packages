@@ -10,6 +10,7 @@ from scripts.srcinfo import SRCINFO
 PACKAGES_PATH = 'packages'
 BUILD_PATH = 'build'
 DIST_PATH = 'dist'
+SCRIPT_PATH = 'scripts'
 # https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Definitions
 NAME_PATTERN = re.compile(r'[a-zA-Z_][a-zA-Z0-9_]*')
 PKGBUILD_PATTERN = re.compile(r'^([a-zA-Z_][a-zA-Z0-9_]*)=([^\n]+)')
@@ -50,7 +51,7 @@ class Package:
         # CI specific stuff
         if ci:
             # Uninstall all packages that were needed to run this script
-            self.__exec("yay -Rs --noconfirm python-clicolor git", '.')
+            self.__exec("yay -Rs --noconfirm python-clicolor git")
 
         # Install dependencies
         deps = srcinfo._base.get('depends', [])
@@ -60,7 +61,7 @@ class Package:
         if len(all_deps) > 0:
             print(f"Installing {len(all_deps)} dependencies")
             dep_str = '"' + '" "'.join(all_deps) + '"'
-            self.__exec(f"yay -S --asdeps --noconfirm --needed {dep_str}", '.')
+            self.__exec(f"yay -S --asdeps --noconfirm --needed {dep_str}")
         else:
             print("No dependencies to install")
 
@@ -89,7 +90,7 @@ class Package:
         # CI specific stuff
         if ci:
             # Install namcap
-            self.__exec("yay -S --noconfirm --needed namcap", '.')
+            self.__exec("yay -S --noconfirm --needed namcap shellcheck")
 
         # Run namcap
         exclusion_args = ""
@@ -114,6 +115,16 @@ class Package:
         if install:
             cmd = f"yay -U --noconfirm --noprogressbar {results[0]}"
             self.__exec(cmd, self.get_build_path())
+
+        # Shellcheck
+        with open(self.get_pkgbuild_path(), 'r') as f:
+            pkgbuild_data = f.read()
+
+        with open(os.path.join(SCRIPT_PATH, 'shellcheck_stub.sh'), 'r') as f:
+            stub_data = f.read()
+
+        final_data = stub_data + pkgbuild_data
+        self.__exec('shellcheck -', stdin=final_data)
 
     def __read_namcap_settings(self) -> Dict[str, object]:
         # Default
@@ -151,11 +162,13 @@ class Package:
 
         return settings
 
-    def __exec(self, cmd: str, directory: str, capture: bool = False
-               ) -> subprocess.CompletedProcess:
+    def __exec(self, cmd: str, directory: str = '.', capture: bool = False,
+               stdin: str = None) -> subprocess.CompletedProcess:
+        if stdin:
+            stdin = stdin.encode()
         print(f"{directory}$ {cmd}")
         proc = subprocess.run(cmd, shell=True, cwd=directory,
-                              capture_output=capture)
+                              capture_output=capture, input=stdin)
         if proc.returncode != 0:
             raise Exception(f"Returned error code {proc.returncode}")
         return proc
