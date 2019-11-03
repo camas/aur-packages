@@ -206,17 +206,21 @@ def full(
     else:
         parser.error("Need package input")
 
-    print(f"{CLI.BOLD}Testing {len(to_do)} packages:{CLI.RESET}")
+    print((f"{CLI.BOLD}Running full process on {len(to_do)} packages:"
+           f"{CLI.RESET}"))
     # Format and print package names
     package_list = _wrap_join_list([p.get_name() for p in to_do], padding=2)
     print(package_list)
     print()
     for i, package in enumerate(to_do, 1):
-        print(f"Preparing {i}/{len(to_do)} {package.get_name()}")
+        print((f"{CLI.BOLD}Preparing {i}/{len(to_do)} {package.get_name()}"
+               f"{CLI.RESET}"))
         package.prepare(ci=True)
-        print(f"Building {i}/{len(to_do)} {package.get_name()}")
+        print((f"{CLI.BOLD}Building {i}/{len(to_do)} {package.get_name()}"
+               f"{CLI.RESET}"))
         package.build()
-        print(f"Testing {i}/{len(to_do)} {package.get_name()}")
+        print((f"{CLI.BOLD}Testing {i}/{len(to_do)} {package.get_name()}"
+               f"{CLI.RESET}"))
         package.test(ci=True)
 
 
