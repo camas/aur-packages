@@ -20,6 +20,6 @@ prepare() {
 package() {
     cd "$srcdir/SecLists-$pkgver"
     mkdir -p "${pkgdir}/usr/share/wordlists/${pkgname}"
-    find . | grep ".txt$" | xargs -I{} cp --parents {} "${pkgdir}/usr/share/wordlists/${pkgname}/"
+    find . | grep ".txt$" | xargs -I{} install -Dm644 {} "${pkgdir}/usr/share/wordlists/${pkgname}/{}"
     install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }
