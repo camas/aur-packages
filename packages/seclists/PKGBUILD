@@ -3,7 +3,7 @@
 pkgname=seclists
 pkgver=2019.3
 pkgrel=1
-pkgdesc="SecLists is the security tester's companion. It's a collection of multiple types of lists used during security assessments, collected in one place."
+pkgdesc="A collection of multiple types of lists used during security assessments, collected in one place."
 arch=('any')
 url="https://github.com/danielmiessler/SecLists"
 license=('MIT')
