@@ -12,6 +12,9 @@ RUN pacman-key --init && \
     pacman -Syyu --noconfirm && \
     pacman -S --noconfirm --needed base-devel git
 
+# Make packager use no compression
+RUN sed -i 's/\.tar\.gz/\.tar/g' /etc/makepkg.conf
+
 # Install yay
 RUN curl -s https://api.github.com/repos/Jguer/yay/releases/latest | \
     grep "browser_download_url.*x86_64.tar.gz" | \
