@@ -13,7 +13,7 @@ RUN pacman-key --init && \
     pacman -S --noconfirm --needed base-devel git
 
 # Make packager use no compression
-RUN sed -i 's/\.tar\.gz/\.tar/' /etc/makepkg.conf
+RUN sed -i "s/PKGEXT=.*/PKGEXT='.pkg.tar'/" /etc/makepkg.conf
 
 # Install yay
 RUN curl -s https://api.github.com/repos/Jguer/yay/releases/latest | \
