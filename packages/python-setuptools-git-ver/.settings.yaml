@@ -1,0 +1,5 @@
+namcap:
+  exclude_lines:
+    - "python-setuptools-git-ver W: Dependency included and not needed ('python-setuptools')"
+history:
+  1.0.4-2: Removed python dependency

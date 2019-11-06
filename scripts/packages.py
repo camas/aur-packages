@@ -26,7 +26,7 @@ class Package:
         self._path = path
         self._pkgbuild = {}
 
-        self._settings = Settings()
+        self._settings = Settings(self.settings_path)
 
         self.__read_pkgbuild()
         self.__check_pkgbuild_vars()
@@ -44,9 +44,7 @@ class Package:
 
         # Create .SRCINFO
         print(f"Creating .SRCINFO")
-        self.__exec(
-            "makepkg --printsrcinfo > .SRCINFO",
-            self.build_path)
+        self.__exec("makepkg --printsrcinfo > .SRCINFO", self.build_path)
 
         # Parse .SRCINFO
         srcinfo = SRCINFO(os.path.join(self.build_path, '.SRCINFO'))
@@ -91,12 +89,9 @@ class Package:
             self.__exec("yay -S --noconfirm --needed namcap shellcheck")
 
         # Run namcap
-        exclusion_args = ""
-        if namcap_settings['exclude']:
-            exclusion_args = f"-e {','.join(namcap_settings['exclude'])} "
         archive_args = ' '.join(results)
         proc = self.__exec(
-            f"namcap {exclusion_args}{archive_args} PKGBUILD",
+            f"namcap {archive_args} PKGBUILD",
             self.build_path,
             capture=True)
 
@@ -104,7 +99,7 @@ class Package:
         output_raw = proc.stdout.decode()
         output = output_raw.splitlines()
         output = [o for o in output if
-                  o not in namcap_settings['exclude_lines']]
+                  o not in self._settings.namcap_excluded_lines]
         if output:
             print('\n'.join(output))
             raise Exception("Namcap found issues")
@@ -137,7 +132,7 @@ class Package:
 
     def __read_pkgbuild(self) -> None:
         # Doesn't read multiline arguments properly
-        with open(self.pkgbuild_path(), 'r') as f:
+        with open(self.pkgbuild_path, 'r') as f:
             for line in f.read().splitlines():
                 result = PKGBUILD_PATTERN.match(line)
                 if result:
@@ -150,6 +145,10 @@ class Package:
         for name in self._pkgbuild.keys():
             if not NAME_PATTERN.match(name):
                 raise Exception(f"{name} is not a valid variable name")
+
+    @property
+    def settings_path(self) -> str:
+        return os.path.join(self.package_path, '.settings.yaml')
 
     @property
     def package_path(self) -> str:
@@ -184,6 +183,7 @@ class PackageManager:
         for path in os.listdir(PACKAGES_PATH):
             package = Package(path)
             packages.append(package)
+        packages.sort(key=lambda x: x.name)
         return packages
 
     @staticmethod
