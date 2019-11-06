@@ -59,6 +59,9 @@ class SRCINFO:
                 if not is_base:
                     emsg = f"{key} can only be used in a pkgbase section"
                     raise Exception(emsg)
+                if key in cur_section:
+                    raise Exception(f"Value for {key} already exists")
+                cur_section[key] = value
             elif key in ARRAY_FIELDS:
                 if key not in cur_section:
                     cur_section[key] = []

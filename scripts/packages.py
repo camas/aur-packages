@@ -188,7 +188,7 @@ class Package:
         if up_settings:
             up_type = up_settings['type']
             if up_type == 'pypi':
-                upver = self.get_pypi_version()
+                upver = self.get_pypi_version(up_settings['name'])
             print(f"Upstream version: {upver}")
             cmp_res = compare(upver, pkgver)
             if cmp_res == 1:
@@ -216,8 +216,8 @@ class Package:
 
         return (pkgver, pkgrel)
 
-    def get_pypi_version(self) -> str:
-        resp = requests.get(f"https://pypi.org/pypi/{self.name}/json")
+    def get_pypi_version(self, name: str) -> str:
+        resp = requests.get(f"https://pypi.org/pypi/{name}/json")
         info = json.loads(resp.text)
         return info['info']['version']
 

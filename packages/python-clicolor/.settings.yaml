@@ -3,3 +3,4 @@ namcap:
     - "python-clicolor W: Dependency included and not needed ('python')"
 upstream:
   type: pypi
+  name: clicolor

@@ -61,6 +61,7 @@
             "args": [
                 "test",
                 "--all",
+                "--no-install",
             ],
             "console": "integratedTerminal"
         },
