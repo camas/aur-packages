@@ -22,6 +22,34 @@ CONFIG_VALUE_PATTERN = re.compile(r'^\t|    (.*)$')
 
 class Package:
 
+    @property
+    def settings_path(self) -> str:
+        return os.path.join(self.package_path, '.settings.yaml')
+
+    @property
+    def package_path(self) -> str:
+        return os.path.join(PACKAGES_PATH, self._path)
+
+    @property
+    def build_path(self) -> str:
+        return os.path.join(BUILD_PATH, self._path)
+
+    @property
+    def pkgbuild_path(self) -> str:
+        return os.path.join(self.package_path, 'PKGBUILD')
+
+    @property
+    def name(self) -> str:
+        return self._path
+
+    @property
+    def version(self) -> str:
+        return self._pkgbuild['pkgver']
+
+    @property
+    def release(self) -> str:
+        return self._pkgbuild['pkgrel']
+
     def __init__(self, path: str) -> None:
         self._path = path
         self._pkgbuild = {}
@@ -147,34 +175,6 @@ class Package:
         for name in self._pkgbuild.keys():
             if not NAME_PATTERN.match(name):
                 raise Exception(f"{name} is not a valid variable name")
-
-    @property
-    def settings_path(self) -> str:
-        return os.path.join(self.package_path, '.settings.yaml')
-
-    @property
-    def package_path(self) -> str:
-        return os.path.join(PACKAGES_PATH, self._path)
-
-    @property
-    def build_path(self) -> str:
-        return os.path.join(BUILD_PATH, self._path)
-
-    @property
-    def pkgbuild_path(self) -> str:
-        return os.path.join(self.package_path, 'PKGBUILD')
-
-    @property
-    def name(self) -> str:
-        return self._path
-
-    @property
-    def version(self) -> str:
-        return self._pkgbuild['pkgver']
-
-    @property
-    def release(self) -> str:
-        return self._pkgbuild['pkgrel']
 
 
 class PackageManager:
