@@ -1,5 +1,6 @@
 import yaml
 from typing import List, Dict
+import typing
 from schema import Schema, Optional
 
 
@@ -17,7 +18,10 @@ class Settings:
             Optional('namcap', default=NAMCAP_DEFAULT): {
                 Optional('exclude_lines', default=[]): [str],
             },
-            Optional('history', default={}): {str: str}
+            Optional('history', default={}): {str: str},
+            Optional('upstream', default=None): {
+                'type': lambda s: s in ['pypi'],
+            }
         })
 
         try:
@@ -34,3 +38,7 @@ class Settings:
     @property
     def history(self) -> Dict[str, str]:
         return self._settings['history']
+
+    @property
+    def upstream(self) -> typing.Optional(Dict[str, str]):
+        return self._settings['upstream']

@@ -1,9 +1,13 @@
-from typing import List
+from typing import List, Tuple
 import os
 import re
 import shutil
 import subprocess
 import glob
+import json
+
+import requests
+import aur
 
 from scripts.srcinfo import SRCINFO
 from scripts.settings import Settings
@@ -81,7 +85,7 @@ class Package:
         if ci:
             # Uninstall all packages that were needed to run this script
             to_uninstall = ['git', 'python-clicolor', 'python-yaml',
-                            'python-schema']
+                            'python-schema', 'python-aur', 'python-requests']
             self.__exec(f"yay -Rs --noconfirm {' '.join(to_uninstall)}")
 
         # Install dependencies
@@ -115,8 +119,9 @@ class Package:
 
         # CI specific stuff
         if ci:
-            # Install namcap
-            self.__exec("yay -S --noconfirm --needed namcap shellcheck")
+            # Install packages needed for testing
+            needed = ['namcap', 'shellcheck']
+            self.__exec(f"yay -S --noconfirm --needed {' '.join(needed)}")
 
         # Run namcap
         archive_args = ' '.join(results)
@@ -148,6 +153,79 @@ class Package:
 
         final_data = stub_data + pkgbuild_data
         self.__exec('shellcheck -', stdin=final_data)
+
+        # Get versions
+        self.check_versions()
+
+    def check_versions(self) -> None:
+        print("Checking versions")
+
+        def compare(a, b):
+            # Returns 1 if a > b, -1 if a < b, 0 if a == b
+            # Handles any version strings with chars from 'a-z0-9\.'
+            a = a.split('.')
+            b = b.split('.')
+            if len(a) != len(b):
+                raise Exception(f"Versions {a} {b} are of different formats")
+
+            for i in range(len(a)):
+                a_part = int(a[i], base=36)
+                b_part = int(b[i], base=36)
+
+                if a_part > b_part:
+                    return 1
+                elif b_part > a_part:
+                    return -1
+                elif i == len(a) - 1:
+                    return 0
+
+        # Get local version
+        pkgver, pkgrel = self.get_srcinfo_version()
+        print(f"Local version:    {pkgver}-{pkgrel}")
+
+        # Check for upstream ver
+        up_settings = self._settings.upstream
+        if up_settings:
+            up_type = up_settings['type']
+            if up_type == 'pypi':
+                upver = self.get_pypi_version()
+            print(f"Upstream version: {upver}")
+            cmp_res = compare(upver, pkgver)
+            if cmp_res == 1:
+                raise Exception("Upstream version is higher than package!")
+            if cmp_res == -1:
+                raise Exception("Package version is higher than upstream!")
+        else:
+            print(f"Upstream version: N/A")
+
+        # Check AUR version
+        aurver, aurrel = self.get_AUR_version()
+        print(f"AUR version:      {aurver}-{aurrel}")
+        cmp_res = compare(aurver + f".{aurrel}", pkgver + f".{pkgrel}")
+        if cmp_res == 1:
+            raise Exception("AUR version higher than local!")
+        if cmp_res == -1:
+            print("Package higher than AUR version")
+
+    def get_AUR_version(self) -> Tuple[str, int]:
+        # Query api and parse version string
+        info = aur.info(self.name)
+        ver_split = info.version.split('-')
+        pkgver = ver_split[0]
+        pkgrel = int(ver_split[1])
+
+        return (pkgver, pkgrel)
+
+    def get_pypi_version(self) -> str:
+        resp = requests.get(f"https://pypi.org/pypi/{self.name}/json")
+        info = json.loads(resp.text)
+        return info['info']['version']
+
+    def get_srcinfo_version(self) -> Tuple[str, int]:
+        srcinfo = SRCINFO(os.path.join(self.build_path, '.SRCINFO'))
+        pkgver = srcinfo._base.get('pkgver')
+        pkgrel = srcinfo._base.get('pkgrel')
+        return (pkgver, pkgrel)
 
     def __exec(self, cmd: str, directory: str = '.', capture: bool = False,
                stdin: str = None) -> subprocess.CompletedProcess:
