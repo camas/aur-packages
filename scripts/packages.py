@@ -52,7 +52,9 @@ class Package:
         # CI specific stuff
         if ci:
             # Uninstall all packages that were needed to run this script
-            self.__exec("yay -Rs --noconfirm python-clicolor git")
+            to_uninstall = ['git', 'python-clicolor', 'python-yaml',
+                            'python-schema']
+            self.__exec(f"yay -Rs --noconfirm {' '.join(to_uninstall)}")
 
         # Install dependencies
         deps = srcinfo._base.get('depends', [])

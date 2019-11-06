@@ -34,4 +34,4 @@ USER builduser
 
 # Install packages needed to run the packager
 RUN yay -Syu --noconfirm && \
-    yay -S --noconfirm --needed python-clicolor
+    yay -S --noconfirm --needed python-clicolor python-yaml python-schema
