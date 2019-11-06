@@ -32,6 +32,8 @@ jobs:
   include:
     # Build docker image for other jobs
     - stage: image
+      # Don't build if pull request. Docker credentials won't be available
+      if: type != pull_request
       script: ./.travis/build_docker.sh
       env:
     # Delete old docker images
