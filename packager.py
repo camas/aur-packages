@@ -99,7 +99,7 @@ def list_packages(
     print(f"{CLI.BOLD}{len(packages)} packages:{CLI.RESET}")
     for package in packages[:print_max]:
         print((f"  {package._path:<32} "
-               f"{package.get_version()}-{package.get_release()}"))
+               f"{package.version}-{package.release}"))
     if len(packages) > print_max:
         print(f"  and {len(packages) - print_max} more...")
 
@@ -120,11 +120,11 @@ def build(
 
     print(f"{CLI.BOLD}Building {len(to_build)} packages:{CLI.RESET}")
     # Format and print package names
-    package_list = _wrap_join_list([p.get_name() for p in to_build], padding=2)
+    package_list = _wrap_join_list([p.name for p in to_build], padding=2)
     print(package_list)
     print()
     for i, package in enumerate(to_build, 1):
-        print(f"Building {i}/{len(to_build)} {package.get_name()}")
+        print(f"Building {i}/{len(to_build)} {package.name}")
         package.build()
 
 
@@ -144,11 +144,11 @@ def prepare(
 
     print(f"{CLI.BOLD}Preparing {len(to_prep)} packages:{CLI.RESET}")
     # Format and print package names
-    package_list = _wrap_join_list([p.get_name() for p in to_prep], padding=2)
+    package_list = _wrap_join_list([p.name for p in to_prep], padding=2)
     print(package_list)
     print()
     for i, package in enumerate(to_prep, 1):
-        print(f"Preparing {i}/{len(to_prep)} {package.get_name()}")
+        print(f"Preparing {i}/{len(to_prep)} {package.name}")
         package.prepare()
 
 
@@ -168,11 +168,11 @@ def test(
 
     print(f"{CLI.BOLD}Testing {len(to_test)} packages:{CLI.RESET}")
     # Format and print package names
-    package_list = _wrap_join_list([p.get_name() for p in to_test], padding=2)
+    package_list = _wrap_join_list([p.name for p in to_test], padding=2)
     print(package_list)
     print()
     for i, package in enumerate(to_test, 1):
-        print(f"Testing {i}/{len(to_test)} {package.get_name()}")
+        print(f"Testing {i}/{len(to_test)} {package.name}")
         package.test(install=not args.test_no_install)
 
 
@@ -209,17 +209,17 @@ def full(
     print((f"{CLI.BOLD}Running full process on {len(to_do)} packages:"
            f"{CLI.RESET}"))
     # Format and print package names
-    package_list = _wrap_join_list([p.get_name() for p in to_do], padding=2)
+    package_list = _wrap_join_list([p.name for p in to_do], padding=2)
     print(package_list)
     print()
     for i, package in enumerate(to_do, 1):
-        print((f"{CLI.BOLD}Preparing {i}/{len(to_do)} {package.get_name()}"
+        print((f"{CLI.BOLD}Preparing {i}/{len(to_do)} {package.name}"
                f"{CLI.RESET}"))
         package.prepare(ci=True)
-        print((f"{CLI.BOLD}Building {i}/{len(to_do)} {package.get_name()}"
+        print((f"{CLI.BOLD}Building {i}/{len(to_do)} {package.name}"
                f"{CLI.RESET}"))
         package.build()
-        print((f"{CLI.BOLD}Testing {i}/{len(to_do)} {package.get_name()}"
+        print((f"{CLI.BOLD}Testing {i}/{len(to_do)} {package.name}"
                f"{CLI.RESET}"))
         package.test(ci=True)
 
@@ -248,7 +248,7 @@ def header(
         print(line.center(LINE_WIDTH, ' '))
     print()
 
-    package_names = [p.get_name() for p in PackageManager.get_packages()]
+    package_names = [p.name for p in PackageManager.get_packages()]
     package_list = _wrap_join_list(package_names).splitlines()
     for line in package_list:
         print(line.center(LINE_WIDTH, ' '))
