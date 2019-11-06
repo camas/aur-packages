@@ -40,5 +40,5 @@ class Settings:
         return self._settings['history']
 
     @property
-    def upstream(self) -> typing.Optional(Dict[str, str]):
+    def upstream(self) -> typing.Optional[Dict[str, str]]:
         return self._settings['upstream']
