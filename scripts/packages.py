@@ -105,7 +105,7 @@ class Package:
         else:
             if rel != 1:
                 raise Exception(f"Newer version but rel {rel} isn't 1")
-            res = __compare(ver, aurver)
+            res = _compare(ver, aurver)
             if res != 1:
                 raise Exception(f"Version {ver} isn't newer than AUR {aurver}")
 
@@ -230,7 +230,7 @@ class Package:
             if up_type == 'pypi':
                 upver = self.get_pypi_version(up_settings['name'])
             print(f"Upstream version: {upver}")
-            cmp_res = __compare(upver, pkgver)
+            cmp_res = _compare(upver, pkgver)
             if cmp_res == 1:
                 raise Exception("Upstream version is higher than package!")
             if cmp_res == -1:
@@ -241,7 +241,7 @@ class Package:
         # Check AUR version
         aurver, aurrel = self.get_AUR_version()
         print(f"AUR version:      {aurver}-{aurrel}")
-        cmp_res = __compare(aurver + f".{aurrel}", pkgver + f".{pkgrel}")
+        cmp_res = _compare(aurver + f".{aurrel}", pkgver + f".{pkgrel}")
         if cmp_res == 1:
             raise Exception("AUR version higher than local!")
         if cmp_res == -1:
@@ -311,7 +311,7 @@ class PackageManager:
         return Package(name)
 
 
-def __compare(a, b):
+def _compare(a, b):
     # Returns 1 if a > b, -1 if a < b, 0 if a == b
     # Handles any version strings with chars from 'a-z0-9\.'
     a = a.split('.')
