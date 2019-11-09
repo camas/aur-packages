@@ -69,6 +69,12 @@ def main() -> None:
     t_parser.add_argument("full_names", metavar='package', nargs='*',
                           help="packages to use")
 
+    # Full command
+    DIST_COMMAND = 'dist'
+    t_parser = subparsers.add_parser(DIST_COMMAND,
+                                     help="distribute the package")
+    t_parser.add_argument("name", metavar='package', help="package to use")
+
     # Print help if no args
     if len(sys.argv) == 1:
         parser.print_help()
@@ -86,6 +92,7 @@ def main() -> None:
         PREP_COMMAND: prepare,
         TEST_COMMAND: test,
         FULL_COMMAND: full,
+        DIST_COMMAND: distribute,
     }
     commands[args.command](parser, args)
 
@@ -102,6 +109,15 @@ def list_packages(
                f"{package.version}-{package.release}"))
     if len(packages) > print_max:
         print(f"  and {len(packages) - print_max} more...")
+
+
+def distribute(
+    parser: argparse.ArgumentParser,
+    args: argparse.Namespace,
+) -> None:
+    package = PackageManager.get_package(args.name)
+    print(f"{CLI.BOLD}Distributing  {package.name}{CLI.RESET}")
+    package.distribute()
 
 
 def build(

@@ -39,6 +39,10 @@ class Package:
         return os.path.join(BUILD_PATH, self._path)
 
     @property
+    def dist_path(self) -> str:
+        return os.path.join(DIST_PATH, self._path)
+
+    @property
     def pkgbuild_path(self) -> str:
         return os.path.join(self.package_path, 'PKGBUILD')
 
@@ -62,6 +66,43 @@ class Package:
 
         self.__read_pkgbuild()
         self.__check_pkgbuild_vars()
+
+    def distribute(self) -> None:
+        # Clear distribution directory
+        shutil.rmtree(self.dist_path)
+        os.mkdir(self.dist_path)
+
+        # Clone repo
+        self.__exec(f'git clone ssh://aur@aur.archlinux.org/{self.name}.git',
+                    self.dist_path)
+
+        repo_path = os.path.join(self.dist_path, self.name)
+        git_dir = os.path.abspath(os.path.join(repo_path, '.git'))
+        git_dir_opt = f'GIT_DIR="{git_dir}"'
+
+        # Copy
+        for file in glob.glob(f'{self.package_path}/**/*', recursive=True):
+            rel_name = file[len(self.package_path) + 1:]
+            dest = f"{repo_path}/{rel_name}"
+            shutil.copy(file, dest)
+            self.__exec(f'{git_dir_opt} git add {rel_name}', repo_path)
+
+        # Generate .srcinfo
+        self.__exec("makepkg --printsrcinfo > .SRCINFO", repo_path)
+        self.__exec(f'{git_dir_opt} git add .SRCINFO', repo_path)
+
+        # Show diff
+        self.__exec(f'{git_dir_opt} git diff --staged', repo_path)
+
+        # Check if ok
+        res = input('Commit message (or blank to abort): ').strip()
+        if not res:
+            print("Exiting...")
+            return
+
+        # Push changes
+        self.__exec(f'{git_dir_opt} git commit -m "{res}"', repo_path)
+        self.__exec(f'{git_dir_opt} git push', repo_path)
 
     def prepare(self, ci: bool = False) -> None:
         # Clear build directory
