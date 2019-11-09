@@ -23,4 +23,3 @@ package() {
 	cd "$srcdir/API-dnsdumpster.com"
 	python setup.py install --root="${pkgdir}/" --optimize=1
 }
-

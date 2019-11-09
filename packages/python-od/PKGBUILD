@@ -8,7 +8,7 @@ pkgdesc="Shorthand syntax for building OrderedDicts"
 arch=('any')
 url="https://github.com/epsy/od/"
 license=('MIT')
-depends=('python') 
+depends=('python')
 makedepends=('python-setuptools')
 provides=('python-od')
 conflicts=('python-od')
@@ -26,4 +26,3 @@ package() {
     python setup.py install --root="$pkgdir/" --optimize=1 --skip-build
     install -Dm644 LICENSE.txt "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }
-

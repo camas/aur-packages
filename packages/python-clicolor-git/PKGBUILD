@@ -7,7 +7,7 @@ pkgdesc="Quick python reference for terminal color escape codes"
 arch=('any')
 url="https://github.com/camas/clicolors"
 license=('MIT')
-depends=('python') 
+depends=('python')
 makedepends=('git' 'python-setuptools')
 provides=('python-clicolor')
 conflicts=('python-clicolor')
@@ -25,4 +25,3 @@ package() {
     python setup.py install --root="$pkgdir/" --optimize=1 --skip-build
     install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }
-
