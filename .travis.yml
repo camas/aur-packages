@@ -22,7 +22,7 @@ env:
   - PACKAGE=python-dnsdumpster-api-git
   - PACKAGE=python-od
   - PACKAGE=python-setuptools-git-ver
-  - PACKAGE=seclists
+  - PACKAGE=seclists-c
 
 # test stage script
 script: ./.travis/test_package.sh
