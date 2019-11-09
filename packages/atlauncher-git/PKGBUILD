@@ -5,7 +5,7 @@
 
 pkgname=atlauncher-git
 pkgver=3.2.3.7.r521.g6d2f1d14
-pkgrel=4
+pkgrel=2
 pkgdesc="A Launcher for Minecraft which integrates multiple different ModPacks to allow you to download and install ModPacks easily and quickly."
 arch=(any)
 url="https://atlauncher.com/"
@@ -23,7 +23,7 @@ source=("git+https://github.com/ATLauncher/ATLauncher.git"
 
 sha256sums=('SKIP'
             '74d6a11ff042fbae373a6ee98f7988489057bf5a7d325270ae5411525982b910'
-            'eb9246f20098844f2f4226fbfe0b2d4a4d20c80e4e295b14c23f3857267b12ca'
+            '5f45436c96ab9830555d0f987a96fc0b1a9766d450b958aba282820ffca6cc84'
             '369c7aa4439762878fd9970c75d1312cf0cd97119c8320b732addef4a621482d')
 
 pkgver() {

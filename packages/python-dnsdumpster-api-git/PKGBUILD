@@ -2,7 +2,7 @@
 
 pkgname=python-dnsdumpster-api-git
 pkgver=0.2.r26.geda15d6
-pkgrel=2
+pkgrel=1
 pkgdesc="Python API for dnsdumpster.com"
 arch=(any)
 url="https://github.com/PaulSec/API-dnsdumpster.com"

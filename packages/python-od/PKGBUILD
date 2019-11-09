@@ -3,7 +3,7 @@
 pkgname=python-od
 _name=${pkgname#python-}
 pkgver=1.0
-pkgrel=2
+pkgrel=1
 pkgdesc="Shorthand syntax for building OrderedDicts"
 arch=('any')
 url="https://github.com/epsy/od/"
