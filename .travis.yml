@@ -43,9 +43,3 @@ jobs:
       script: python ./.travis/delete_old.py
       services:
       env:
-    - stage: deploy
-      language: python
-      python: 3.7
-      script: echo "TODO"
-      services:
-      env:
