@@ -69,7 +69,10 @@ class Package:
 
     def distribute(self) -> None:
         # Clear distribution directory
-        shutil.rmtree(self.dist_path)
+        try:
+            shutil.rmtree(self.dist_path)
+        except FileNotFoundError:
+            pass
         os.mkdir(self.dist_path)
 
         # Clone repo
@@ -90,6 +93,21 @@ class Package:
         # Generate .srcinfo
         self.__exec("makepkg --printsrcinfo > .SRCINFO", repo_path)
         self.__exec(f'{git_dir_opt} git add .SRCINFO', repo_path)
+
+        # Check version is newer
+        aurver, aurrel = self.get_AUR_version()
+        ver, rel = self.get_srcinfo_version()
+        print(f"Local version:    {ver}-{rel}")
+        print(f"AUR version:      {aurver}-{aurrel}")
+        if ver == aurver:
+            if rel != aurrel + 1:
+                raise Exception(f"rel {rel} isn't 1 higher than AUR {aurrel}")
+        else:
+            if rel != 1:
+                raise Exception(f"Newer version but rel {rel} isn't 1")
+            res = __compare(ver, aurver)
+            if res != 1:
+                raise Exception(f"Version {ver} isn't newer than AUR {aurver}")
 
         # Show diff
         self.__exec(f'{git_dir_opt} git diff --staged', repo_path)
@@ -201,25 +219,6 @@ class Package:
     def check_versions(self) -> None:
         print("Checking versions")
 
-        def compare(a, b):
-            # Returns 1 if a > b, -1 if a < b, 0 if a == b
-            # Handles any version strings with chars from 'a-z0-9\.'
-            a = a.split('.')
-            b = b.split('.')
-            if len(a) != len(b):
-                raise Exception(f"Versions {a} {b} are of different formats")
-
-            for i in range(len(a)):
-                a_part = int(a[i], base=36)
-                b_part = int(b[i], base=36)
-
-                if a_part > b_part:
-                    return 1
-                elif b_part > a_part:
-                    return -1
-                elif i == len(a) - 1:
-                    return 0
-
         # Get local version
         pkgver, pkgrel = self.get_srcinfo_version()
         print(f"Local version:    {pkgver}-{pkgrel}")
@@ -231,7 +230,7 @@ class Package:
             if up_type == 'pypi':
                 upver = self.get_pypi_version(up_settings['name'])
             print(f"Upstream version: {upver}")
-            cmp_res = compare(upver, pkgver)
+            cmp_res = __compare(upver, pkgver)
             if cmp_res == 1:
                 raise Exception("Upstream version is higher than package!")
             if cmp_res == -1:
@@ -242,7 +241,7 @@ class Package:
         # Check AUR version
         aurver, aurrel = self.get_AUR_version()
         print(f"AUR version:      {aurver}-{aurrel}")
-        cmp_res = compare(aurver + f".{aurrel}", pkgver + f".{pkgrel}")
+        cmp_res = __compare(aurver + f".{aurrel}", pkgver + f".{pkgrel}")
         if cmp_res == 1:
             raise Exception("AUR version higher than local!")
         if cmp_res == -1:
@@ -310,3 +309,23 @@ class PackageManager:
     @staticmethod
     def get_package(name: str) -> Package:
         return Package(name)
+
+
+def __compare(a, b):
+    # Returns 1 if a > b, -1 if a < b, 0 if a == b
+    # Handles any version strings with chars from 'a-z0-9\.'
+    a = a.split('.')
+    b = b.split('.')
+    if len(a) != len(b):
+        raise Exception(f"Versions {a} {b} are of different formats")
+
+    for i in range(len(a)):
+        a_part = int(a[i], base=36)
+        b_part = int(b[i], base=36)
+
+        if a_part > b_part:
+            return 1
+        elif b_part > a_part:
+            return -1
+        elif i == len(a) - 1:
+            return 0
