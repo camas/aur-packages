@@ -3,7 +3,7 @@
 # Show commands
 set -x
 
-# Fail immediately on error 
+# Fail immediately on error
 set -e
 
 # Login to docker
@@ -14,6 +14,11 @@ then
     # Full build of image
     docker build -t aur-ci -f ./.travis/aur-ci-img/Dockerfile .
 else
+    # Quick hack to ensure package database is updated
+    if [[ -z "$TRAVIS_EVENT_TYPE" ]]; then
+        echo "RUN yay -Sy" >> ./.travis/aur-ci-img/Dockerfile
+    fi
+
     # Build using cache
     docker pull camas/aur-ci:latest
     docker build -t aur-ci -f ./.travis/aur-ci-img/Dockerfile \
