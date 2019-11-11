@@ -1,3 +1,6 @@
 namcap:
   exclude_lines:
     - "python-od W: Dependency included and not needed ('python')"
+upstream:
+  type: pypi
+  name: od
