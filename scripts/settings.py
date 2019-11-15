@@ -20,7 +20,7 @@ class Settings:
             },
             Optional('history', default={}): {str: str},
             Optional('upstream', default=None): {
-                'type': lambda s: s in ['pypi'],
+                'type': lambda s: s in ['pypi', 'github'],
                 'name': str,
             }
         })

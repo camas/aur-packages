@@ -4,7 +4,6 @@ import re
 import shutil
 import subprocess
 import glob
-import json
 
 import requests
 import aur
@@ -227,8 +226,16 @@ class Package:
         up_settings = self._settings.upstream
         if up_settings:
             up_type = up_settings['type']
+            up_name = up_settings['name']
             if up_type == 'pypi':
-                upver = self.get_pypi_version(up_settings['name'])
+                upver = self.get_pypi_version(up_name)
+            elif up_type == 'github':
+                url = f"https://api.github.com/repos/{up_name}/tags"
+                resp = requests.get(url)
+                data = resp.json()
+                upver = data[0]['name']
+            else:
+                raise Exception(f"Unknown upstream type {up_type}")
             print(f"Upstream version: {upver}")
             cmp_res = _compare(upver, pkgver)
             if cmp_res == 1:
@@ -258,7 +265,7 @@ class Package:
 
     def get_pypi_version(self, name: str) -> str:
         resp = requests.get(f"https://pypi.org/pypi/{name}/json")
-        info = json.loads(resp.text)
+        info = resp.json()
         return info['info']['version']
 
     def get_srcinfo_version(self) -> Tuple[str, int]:
