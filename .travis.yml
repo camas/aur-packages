@@ -2,6 +2,7 @@
 os: linux
 dist: bionic
 language: python
+python: 3.8
 
 # Docker used in every job
 services:
@@ -40,8 +41,6 @@ jobs:
       env:
     # Delete old docker images
     - stage: image
-      language: python
-      python: 3.7
       install: pip install requests python-dateutil
       script: python ./.travis/delete_old.py
       services:
