@@ -23,6 +23,9 @@ env:
   - PACKAGE=python-setuptools-git-ver
   - PACKAGE=seclists-c
 
+# Install python dependencies
+install: pip install aur clicolor requests python-dateutil pyyaml schema
+
 # test stage script
 script: ./.travis/test_package.sh
 
