@@ -10,13 +10,13 @@ Per-package settings are stored in `/packages/[name]/.settings.yaml`
 
 All travis related files are in `/.travis`
 
-Packages are built in `/build` and deployed in `/dist`. Both are cleaned at the start of these steps
+Packages are deployed using `/dist`
 
 Uses `packager.py` to manage packages
 
 Requires `yay`, `namcap`
 
-Requires pip packages `requests`, `python-dateutil`, `pyyaml`, `schema` and `clicolor`
+Requires pip packages `requests`, `python-dateutil`, `pyyaml`, `schema` `aur` and `clicolor`
 
 ## Useful Links
 
@@ -59,7 +59,7 @@ $ python packager.py header
 
 $ python packager.py test --all
 ...
-a few hundred lines and a few minutes later
+a few hundred lines and a minute or two later
 ...
-All packages tested successfully
+Packages tested successfully
 ```
