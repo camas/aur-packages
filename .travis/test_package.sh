@@ -7,7 +7,7 @@ set -x
 set -e
 
 # Pull latest image to save on compile time
-docker pull camas/aur-ci
+docker pull camas/aur-ci:"$TRAVIS_BUILD_ID"
 
 # Run tests
 python packager.py test "$PACKAGE"
