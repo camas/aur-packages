@@ -1,7 +1,7 @@
 # Minimal ubuntu VM
 os: linux
 dist: bionic
-language: minimal
+language: python
 
 # Docker used in every job
 services:
@@ -33,7 +33,7 @@ jobs:
     - stage: image
       # Don't build if pull request. Docker credentials won't be available
       if: type != pull_request
-      script: ./.travis/build_docker.sh
+      script: ./.travis/build_image.sh
       env:
     # Delete old docker images
     - stage: image

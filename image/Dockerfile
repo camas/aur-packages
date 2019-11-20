@@ -43,6 +43,9 @@ USER builduser
 # Update Yay settings
 RUN yay --nogitclone --save
 
+# Download test packages but don't install
+RUN yay -S --downloadonly --noconfirm namcap shellcheck-static
+
 # Copy package files
 COPY --chown=builduser image/shellcheck_stub.sh packages/shellcheck_stub.sh
 COPY --chown=builduser image/test.sh packages/test.sh

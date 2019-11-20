@@ -22,7 +22,7 @@ d_var=( ${!tmp} )
 chk_var="makedepends_$(uname -m)"
 tmp=$chk_var[@]
 chk_var=( ${!tmp} )
-yay -S --noconfirm --asdeps "${makedepends[@]}" "${depends[@]}" "${checkdepends[@]}" ${mk_var[@]} ${d_var[@]} ${chk_var[@]}
+yay -S --noconfirm --asdeps --needed "${makedepends[@]}" "${depends[@]}" "${checkdepends[@]}" "${mk_var[@]}" "${d_var[@]}" "${chk_var[@]}"
 
 # Build and install package
 echo "Building $package"
@@ -31,7 +31,7 @@ makepkg --noconfirm -i
 
 # Test package
 echo "Installing packages needed for tests"
-yay -S --noconfirm namcap shellcheck-static
+yay -S --noconfirm --needed namcap shellcheck-static
 echo "Testing $package"
 
 # Namcap
