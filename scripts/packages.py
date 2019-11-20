@@ -34,10 +34,6 @@ class Package:
         return os.path.join(PACKAGES_PATH, self._path)
 
     @property
-    def build_path(self) -> str:
-        return os.path.join(BUILD_PATH, self._path)
-
-    @property
     def dist_path(self) -> str:
         return os.path.join(DIST_PATH, self._path)
 
@@ -121,98 +117,20 @@ class Package:
         self.__exec(f'{git_dir_opt} git commit -m "{res}"', repo_path)
         self.__exec(f'{git_dir_opt} git push', repo_path)
 
-    def prepare(self, ci: bool = False) -> None:
-        # Clear build directory
-        try:
-            shutil.rmtree(self.build_path)
-        except FileNotFoundError:
-            pass
+    def test(self) -> None:
+        # Run test.sh in a docker container
+        docker_cmd = [
+            'sudo',
+            'docker',
+            'run',
+            '--rm',
+            'camas/aur-packages',
+            '/packages/test.sh',
+            self.name,
+        ]
+        subprocess.run(docker_cmd, check=True)
 
-        # Copy files to build directory
-        print(f"Copying files to {self.build_path}")
-        shutil.copytree(self.package_path, self.build_path)
-
-        # Create .SRCINFO
-        print(f"Creating .SRCINFO")
-        self.__exec("makepkg --printsrcinfo > .SRCINFO", self.build_path)
-
-        # Parse .SRCINFO
-        srcinfo = SRCINFO(os.path.join(self.build_path, '.SRCINFO'))
-
-        # CI specific stuff
-        if ci:
-            # Uninstall all packages that were needed to run this script
-            to_uninstall = ['git', 'python-clicolor', 'python-yaml',
-                            'python-schema', 'python-aur', 'python-requests']
-            self.__exec(f"yay -Rs --noconfirm {' '.join(to_uninstall)}")
-
-        # Install dependencies
-        deps = srcinfo._base.get('depends', [])
-        make_deps = srcinfo._base.get('makedepends', [])
-        check_deps = srcinfo._base.get('checkdepends', [])
-        all_deps = deps + make_deps + check_deps
-        if len(all_deps) > 0:
-            print(f"Installing {len(all_deps)} dependencies")
-            dep_str = '"' + '" "'.join(all_deps) + '"'
-            self.__exec(f"yay -S --asdeps --noconfirm --needed {dep_str}")
-        else:
-            print("No dependencies to install")
-
-    def build(self) -> None:
-        # Build package
-        print(f"Building package")
-        self.__exec("makepkg --noconfirm --cleanbuild", self.build_path)
-
-    def test(self, install: bool = True, ci: bool = False) -> None:
-        # Assumes files exist in build dir then runs namcap and tries to
-        # install the package
-
-        # Find package files
-        glob_str = os.path.join(self.build_path,
-                                f"{self.name}*.pkg.*")
-        results = [os.path.basename(r) for r in glob.glob(glob_str)]
-
-        if len(results) != 1:
-            raise Exception(f"Expected only 1 package. Found {len(results)}")
-
-        # CI specific stuff
-        if ci:
-            # Install packages needed for testing
-            needed = ['namcap', 'shellcheck']
-            self.__exec(f"yay -S --noconfirm --needed {' '.join(needed)}")
-
-        # Run namcap
-        archive_args = ' '.join(results)
-        proc = self.__exec(
-            f"namcap {archive_args} PKGBUILD",
-            self.build_path,
-            capture=True)
-
-        # Check namcap didn't warn or error
-        output_raw = proc.stdout.decode()
-        output = output_raw.splitlines()
-        output = [o for o in output if
-                  o not in self._settings.namcap_excluded_lines]
-        if output:
-            print('\n'.join(output))
-            raise Exception("Namcap found issues")
-
-        # Install package
-        if install:
-            cmd = f"yay -U --noconfirm --noprogressbar {results[0]}"
-            self.__exec(cmd, self.build_path)
-
-        # Shellcheck
-        with open(self.pkgbuild_path, 'r') as f:
-            pkgbuild_data = f.read()
-
-        with open(os.path.join(SCRIPT_PATH, 'shellcheck_stub.sh'), 'r') as f:
-            stub_data = f.read()
-
-        final_data = stub_data + pkgbuild_data
-        self.__exec('shellcheck -', stdin=final_data)
-
-        # Get versions
+        # Check versions
         self.check_versions()
 
     def check_versions(self) -> None:
@@ -269,7 +187,8 @@ class Package:
         return info['info']['version']
 
     def get_srcinfo_version(self) -> Tuple[str, int]:
-        srcinfo = SRCINFO(os.path.join(self.build_path, '.SRCINFO'))
+        proc = self.__exec("makepkg --printsrcinfo", self.package_path, True)
+        srcinfo = SRCINFO(proc.stdout.decode())
         pkgver = srcinfo._base.get('pkgver')
         pkgrel = srcinfo._base.get('pkgrel')
         return (pkgver, pkgrel)

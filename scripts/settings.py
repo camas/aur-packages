@@ -10,14 +10,7 @@ class Settings:
         self.__read_from(path)
 
     def __read_from(self, path: str) -> None:
-        NAMCAP_DEFAULT = {
-            'exclude_lines': []
-        }
-
         settings_schema = Schema({
-            Optional('namcap', default=NAMCAP_DEFAULT): {
-                Optional('exclude_lines', default=[]): [str],
-            },
             Optional('history', default={}): {str: str},
             Optional('upstream', default=None): {
                 'type': lambda s: s in ['pypi', 'github'],

@@ -1,7 +1,2 @@
-namcap:
-  exclude_lines:
-    - "python-dnsdumpster-api-git E: unknown is not a common license (it's not in /usr/share/licenses/common/)"
-    - "python-dnsdumpster-api-git W: Dependency included and not needed ('python-requests')"
-    - "python-dnsdumpster-api-git W: Dependency included and not needed ('python-beautifulsoup4')"
 history:
   0.2.r26.geda15d6-2: Remove unnecessary python dependency

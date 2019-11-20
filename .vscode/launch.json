@@ -32,28 +32,6 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Prepare all packages",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceRoot}/packager.py",
-            "args": [
-                "prepare",
-                "--all",
-            ],
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "Build all packages",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceRoot}/packager.py",
-            "args": [
-                "build",
-                "--all",
-            ],
-            "console": "integratedTerminal"
-        },
-        {
             "name": "Test all packages",
             "type": "python",
             "request": "launch",
@@ -61,30 +39,30 @@
             "args": [
                 "test",
                 "--all",
-                "--no-install",
             ],
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
         },
         {
-            "name": "Full all packages",
+            "name": "Test python-clicolor",
             "type": "python",
             "request": "launch",
             "program": "${workspaceRoot}/packager.py",
             "args": [
-                "full",
-                "--all",
+                "test",
+                "python-clicolor",
             ],
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
         },
         {
-            "name": "Clean",
+            "name": "Build image",
             "type": "python",
             "request": "launch",
             "program": "${workspaceRoot}/packager.py",
             "args": [
-                "clean",
+                "image",
+                "build",
             ],
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
         },
     ]
 }

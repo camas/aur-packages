@@ -12,14 +12,11 @@ ARCH_FIELDS = ['source', 'depends', 'makedepends', 'optdepends', 'provides',
 
 
 class SRCINFO:
-    def __init__(self, path: str) -> None:
-        self._read_path = path
+    def __init__(self, data: str) -> None:
+        self.__read(data)
 
-        self.__read(path)
-
-    def __read(self, path):
-        with open(path, 'r') as f:
-            lines = f.read().splitlines()
+    def __read(self, data):
+        lines = data.splitlines()
 
         self._base = {}
         self._packages = {}
