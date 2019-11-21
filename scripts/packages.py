@@ -187,10 +187,11 @@ class Package:
         return info['info']['version']
 
     def get_srcinfo_version(self) -> Tuple[str, int]:
-        proc = self.__exec("makepkg --printsrcinfo", self.package_path, True)
-        srcinfo = SRCINFO(proc.stdout.decode())
-        pkgver = srcinfo._base.get('pkgver')
-        pkgrel = srcinfo._base.get('pkgrel')
+        cmd = f"scripts/get_package_version.sh {self.name}"
+        proc = self.__exec(cmd, self.package_path, True)
+        data = proc.stdout.decode().splitlines()
+        pkgver = data[0]
+        pkgrel = int(data[1])
         return (pkgver, pkgrel)
 
     def __exec(self, cmd: str, directory: str = '.', capture: bool = False,
