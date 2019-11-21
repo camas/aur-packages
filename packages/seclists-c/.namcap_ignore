@@ -1,0 +1,4 @@
+seclists-c W: Referenced library 'sh' is an uninstalled dependency
+seclists-c W: Referenced library 'perl' is an uninstalled dependency
+seclists-c W: Referenced library 'bash' is an uninstalled dependency
+seclists-c W: Referenced library 'python3' is an uninstalled dependency

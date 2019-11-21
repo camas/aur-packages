@@ -1,0 +1,4 @@
+atlauncher-git W: Directory (usr/share/atlauncher/Downloads) is empty
+atlauncher-git W: File (usr/share/atlauncher/Downloads) has the world writable bit set.
+atlauncher-git W: Referenced library 'sh' is an uninstalled dependency
+atlauncher-git W: Dependency included and not needed ('openal')

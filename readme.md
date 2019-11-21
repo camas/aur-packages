@@ -14,7 +14,7 @@ Packages are deployed using `/dist`
 
 Uses `packager.py` to manage packages
 
-Requires `yay`, `namcap`
+Docker image uses `yay`, `namcap` and `shellcheck`
 
 Requires pip packages `requests`, `python-dateutil`, `pyyaml`, `schema` `aur` and `clicolor`
 
