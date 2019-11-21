@@ -170,7 +170,9 @@ class Packager:
             '-f',
             str(Path('image/Dockerfile')),
             '--tag',
-            DOCKER_TAG
+            DOCKER_TAG,
+            '--cache-from',
+            'camas/aur-packages',
         ]
         # Set country docker image will use use to generate it's mirrorlist
         if 'MIRRORLIST_COUNTRY' in os.environ:
