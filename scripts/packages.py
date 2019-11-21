@@ -188,7 +188,7 @@ class Package:
 
     def get_srcinfo_version(self) -> Tuple[str, int]:
         cmd = f"./scripts/get_package_version.sh {self.name}"
-        proc = self.__exec(cmd, self.package_path, True)
+        proc = self.__exec(cmd, '.', True)
         data = proc.stdout.decode().splitlines()
         pkgver = data[0]
         pkgrel = int(data[1])
