@@ -16,6 +16,7 @@ then
 else
     # Build using cache
     docker pull camas/aur-ci:latest
+    docker tag camas/aur-ci:latest camas/aur-packages
     python packager.py image build
 fi
 
