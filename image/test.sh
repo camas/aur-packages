@@ -29,6 +29,9 @@ echo "Building $package"
 makepkg --printsrcinfo > .SRCINFO
 makepkg --noconfirm -i
 
+# Remove makedepends
+yay -R --noconfirm "${makedepends[@]}"
+
 # Shell
 if [[ -n "$AUR_SHELL" ]]; then
     bash
