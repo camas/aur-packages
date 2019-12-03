@@ -117,13 +117,22 @@ class Package:
         self.__exec(f'{git_dir_opt} git commit -m "{res}"', repo_path)
         self.__exec(f'{git_dir_opt} git push', repo_path)
 
-    def test(self) -> None:
+    def test(self, shell: bool = False) -> None:
         # Run test.sh in a docker container
+        docker_options = [
+            "--rm",
+        ]
+        if shell:
+            docker_options.extend([
+                "--env",
+                "AUR_SHELL=True",
+                "-it",
+            ])
         docker_cmd = [
             'sudo',
             'docker',
             'run',
-            '--rm',
+            *docker_options,
             'camas/aur-packages',
             '/packages/test.sh',
             self.name,

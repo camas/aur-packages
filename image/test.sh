@@ -29,6 +29,12 @@ echo "Building $package"
 makepkg --printsrcinfo > .SRCINFO
 makepkg --noconfirm -i
 
+# Shell
+if [[ -n "$AUR_SHELL" ]]; then
+    bash
+    exit
+fi
+
 # Test package
 echo "Installing packages needed for tests"
 yay -S --noconfirm --needed namcap shellcheck-static

@@ -40,6 +40,8 @@ class Packager:
         t_parser = subparsers.add_parser(TEST_COMMAND, help="test package(s)")
         t_parser.add_argument('--all', action='store_true', dest='test_all',
                               help="test all packages")
+        t_parser.add_argument('--shell', action='store_true', dest='shell',
+                              help="test all packages")
         t_parser.add_argument("test_names", metavar='package', nargs='*',
                               help="packages to test")
 
@@ -52,7 +54,7 @@ class Packager:
         # Image command
         IMAGE_COMMAND = 'image'
         im_parser = subparsers.add_parser(IMAGE_COMMAND,
-                                          help="distribute the package")
+                                          help="Image functions")
         im_commands = im_parser.add_subparsers(
             title="Commands",
             dest='im_command',
@@ -151,7 +153,7 @@ class Packager:
         for i, package in enumerate(to_test, 1):
             print((f"{CLI.BOLD}Testing {i}/{len(to_test)} {package.name}"
                    f"{CLI.RESET}"))
-            package.test()
+            package.test(self._args.shell)
         print(f"{CLI.BOLD}Packages tested successfully{CLI.RESET}")
 
     def build_image(self) -> None:
