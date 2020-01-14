@@ -40,9 +40,6 @@ RUN useradd -ms /bin/bash builduser && \
 # Set user to build user
 USER builduser
 
-# Update Yay settings
-RUN yay --nogitclone --save
-
 # Download test packages but don't install
 RUN yay -S --downloadonly --noconfirm namcap shellcheck-static
 
