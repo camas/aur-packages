@@ -1,5 +1,4 @@
 history:
   1.0.4-2: Removed python dependency
 upstream:
-  type: pypi
-  name: setuptools-git-ver
+  pypi: setuptools-git-ver

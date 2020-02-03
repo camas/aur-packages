@@ -1,3 +1,2 @@
 upstream:
-  type: pypi
-  name: clicolor
+  pypi: clicolor

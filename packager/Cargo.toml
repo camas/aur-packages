@@ -10,3 +10,6 @@ edition = "2018"
 clap = "^2.33.0"
 log = "^0.4.8"
 stderrlog = "^0.4.3"
+serde = { version = "^1.0.104", features = ["derive"] }
+serde_yaml = "^0.8.11"
+ansi_term = "^0.12.1"

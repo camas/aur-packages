@@ -1,3 +1,2 @@
 upstream:
-  type: github
-  name: camas/seclists-c
+  github: camas/seclists-c
