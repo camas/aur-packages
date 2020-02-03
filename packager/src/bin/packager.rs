@@ -20,6 +20,10 @@ fn main() -> Result<(), Box<dyn Error>> {
         (@subcommand header =>
             (about: "Show header")
         )
+        (@subcommand build =>
+            (about: "Build the docker image")
+            (@arg full_build: -f --full "Build the image fully")
+        )
     );
     let matches = app.get_matches();
 
@@ -50,6 +54,9 @@ fn main() -> Result<(), Box<dyn Error>> {
         list_packages(manager)?;
     } else if matches.subcommand_matches("header").is_some() {
         print_header(manager)?;
+    } else if let Some(matches) = matches.subcommand_matches("build") {
+        let full_build = matches.is_present("full_build");
+        manager.build_image(full_build)?;
     } else {
         // If none print header then help message
         print_header(manager)?;
