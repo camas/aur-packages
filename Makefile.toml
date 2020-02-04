@@ -1,0 +1,21 @@
+[tasks.clean]
+command = "cargo"
+args = ["clean", "--manifest-path", "src/Cargo.toml"]
+
+[tasks.build]
+clear = true
+dependencies = ["do-build", "copy-packager", "copy-tester"]
+
+[tasks.do-build]
+command = "cargo"
+args = ["build", "--manifest-path", "src/Cargo.toml"]
+
+[tasks.copy-tester]
+private = true
+command = "cp"
+args = ["src/target/debug/package_tester", "image/package_tester"]
+
+[tasks.copy-packager]
+private = true
+command = "cp"
+args = ["src/target/debug/packager", "packager"]

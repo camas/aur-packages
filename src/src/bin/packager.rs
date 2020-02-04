@@ -13,12 +13,17 @@ fn main() -> Result<(), Box<dyn Error>> {
         (about: "AUR Package Manager")
         (setting: AppSettings::ArgRequiredElseHelp)
         (@arg verbosity: -v +multiple "Set error verbosity. Repeatable for higher verbosity")
-        (@arg directory: -d --package-dir +takes_value "Set package dir to use")
+        (@arg directory: -d --base-dir +takes_value "Set base dir to use")
         (@subcommand list =>
             (about: "List packages")
         )
         (@subcommand header =>
             (about: "Show header")
+        )
+        (@subcommand test =>
+            (about: "Test a package")
+            (@arg use_shell: -s --shell "Enter into a shell after testing")
+            (@arg package: +required "The package to test")
         )
         (@subcommand build =>
             (about: "Build the docker image")
@@ -44,7 +49,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let dir = if let Some(d) = matches.value_of("directory") {
         PathBuf::from(d)
     } else {
-        PathBuf::from("packages")
+        PathBuf::from("./")
     };
     let manager = PackageManager::from_dir(&dir)?;
 
@@ -54,6 +59,14 @@ fn main() -> Result<(), Box<dyn Error>> {
         list_packages(manager)?;
     } else if matches.subcommand_matches("header").is_some() {
         print_header(manager)?;
+    } else if let Some(matches) = matches.subcommand_matches("test") {
+        let package_name = matches.value_of("package").ok_or("Package not specified")?;
+        let package = manager.get_package_by_name(package_name)?;
+        let use_shell = matches.is_present("use_shell");
+        match manager.test_package(package, use_shell) {
+            Ok(_) => println!("Tests finished successfully"),
+            Err(e) => println!("Tests failed: {}", e),
+        }
     } else if let Some(matches) = matches.subcommand_matches("build") {
         let full_build = matches.is_present("full_build");
         manager.build_image(full_build)?;

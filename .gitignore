@@ -5,3 +5,7 @@
 !.vscode/launch.json
 !.vscode/extensions.json
 *.code-workspace
+
+# Ignore binaries as they will be updated on build
+/image/package_tester
+packager

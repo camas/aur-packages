@@ -10,6 +10,7 @@ use std::path::PathBuf;
 pub struct Package {
     name: String,
     namcap_ignores: Vec<String>,
+    config: Config,
 }
 
 impl Package {
@@ -53,6 +54,7 @@ impl Package {
         Ok(Package {
             name: name.to_str().unwrap().to_string(),
             namcap_ignores,
+            config,
         })
     }
 
