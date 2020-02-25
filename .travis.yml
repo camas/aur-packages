@@ -23,6 +23,7 @@ env:
   - PACKAGE=python-od
   - PACKAGE=python-setuptools-git-ver
   - PACKAGE=seclists-c
+  - PACKAGE=ffuf-bin
 
 # test stage script
 script: ./.travis/test_package.sh
