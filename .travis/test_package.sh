@@ -11,4 +11,4 @@ docker pull camas/aur-ci:"$TRAVIS_BUILD_ID"
 docker tag camas/aur-ci:"$TRAVIS_BUILD_ID" camas/aur-packages
 
 # Run tests
-docker run --tempfs /tmp --rm camas/aur-packages package_tester "$PACKAGE"
+docker run --tmpfs /tmp --rm camas/aur-packages package_tester "$PACKAGE"
