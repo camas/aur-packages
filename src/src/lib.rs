@@ -2,6 +2,7 @@ use log::*;
 use std::error::Error;
 use std::process::Command;
 
+pub mod aur;
 mod package;
 mod package_manager;
 
@@ -32,6 +33,21 @@ pub fn run_command_no_capture(command: &str, args: &[&str]) -> Result<(), Box<dy
         let error_string = format!(
             "Command {} {:?} failed with error code {}",
             command, args, error_code
+        );
+        return Err(error_string.into());
+    }
+
+    Ok(())
+}
+
+pub fn run_premade_command(command: &mut Command) -> Result<(), Box<dyn Error>> {
+    debug!("Running command {:?}", command);
+    let status = command.spawn()?.wait()?;
+    if !status.success() {
+        let error_code = status.code().ok_or("No error code returned")?;
+        let error_string = format!(
+            "Command {:?} failed with error code {}",
+            command, error_code
         );
         return Err(error_string.into());
     }

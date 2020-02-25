@@ -6,18 +6,23 @@ set -x
 # Fail immediately on error
 set -e
 
+# Build packager
+cargo build --release --manifest-path src/Cargo.toml
+cp src/target/release/packager packager
+cp src/target/release/package_tester image/package_tester
+
 # Login to docker
 docker login -u "camas" -p "$DOCKER_PASSWORD"
 
 if [[ "$TRAVIS_EVENT_TYPE" == 'cron' ]]
 then
     # Full build of image
-    python packager.py image fullbuild
+    ./packager -vvvv build -f
 else
     # Build using cache
     docker pull camas/aur-ci:latest
     docker tag camas/aur-ci:latest camas/aur-packages
-    python packager.py image build
+    ./packager -vvvv build
 fi
 
 # Tag and push

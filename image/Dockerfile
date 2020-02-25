@@ -18,7 +18,8 @@ RUN pacman-key --init && \
 
 # Optimise packager
 RUN sed -i "s/PKGEXT=.*/PKGEXT='.pkg.tar'/" /etc/makepkg.conf && \
-    sed -i "s/#MAKEFLAGS=.*/MAKEFLAGS=\"-j\$(( \$(nproc) + 1 ))\"/" /etc/makepkg.conf
+    sed -i "s/#MAKEFLAGS=.*/MAKEFLAGS=\"-j\$(( \$(nproc) + 1 ))\"/" /etc/makepkg.conf && \
+    sed -i "s/OPTIONS\=[(]strip/OPTIONS\=(\!strip/" /etc/makepkg.conf
 
 # Add build user with sudo rights
 RUN useradd -ms /bin/bash builduser && \
@@ -34,4 +35,4 @@ USER builduser
 COPY --chown=builduser packages packages
 
 # Copy test executable
-COPY --chown=builduser image/package_tester package_tester
+COPY --chown=builduser image/package_tester /usr/local/bin/package_tester

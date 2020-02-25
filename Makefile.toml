@@ -19,3 +19,21 @@ args = ["src/target/debug/package_tester", "image/package_tester"]
 private = true
 command = "cp"
 args = ["src/target/debug/packager", "packager"]
+
+[tasks.release]
+clear = true
+dependencies = ["do-release", "copy-release-packager", "copy-release-tester"]
+
+[tasks.do-release]
+command = "cargo"
+args = ["build", "--release", "--manifest-path", "src/Cargo.toml"]
+
+[tasks.copy-release-tester]
+private = true
+command = "cp"
+args = ["src/target/release/package_tester", "image/package_tester"]
+
+[tasks.copy-release-packager]
+private = true
+command = "cp"
+args = ["src/target/release/packager", "packager"]

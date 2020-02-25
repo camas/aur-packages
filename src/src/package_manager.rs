@@ -135,10 +135,10 @@ impl PackageManager {
         }
 
         // Test 2: Install inside docker container
-        // Copy package_tester binary to image folder
-
         // Run docker
-        let mut args = vec!["docker", "run", "--rm"];
+        trace!("Running docker");
+        self.build_image(false)?;
+        let mut args = vec!["docker", "run", "--tmpfs", "/tmp", "--rm"];
         if enter_shell {
             args.extend(vec!["--env", "AUR_SHELL=True", "-it"]);
         }

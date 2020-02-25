@@ -1,8 +1,8 @@
 # Minimal ubuntu VM
 os: linux
 dist: bionic
-language: python
-python: 3.8
+language: rust
+cache: cargo
 
 # Docker used in every job
 services:
@@ -24,9 +24,6 @@ env:
   - PACKAGE=python-setuptools-git-ver
   - PACKAGE=seclists-c
 
-# Install python dependencies
-install: pip install aur clicolor requests python-dateutil pyyaml schema
-
 # test stage script
 script: ./.travis/test_package.sh
 
@@ -41,6 +38,7 @@ jobs:
       env:
     # Delete old docker images
     - stage: image
+      language: python
       install: pip install requests python-dateutil
       script: python ./.travis/delete_old.py
       services:
