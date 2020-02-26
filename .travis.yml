@@ -3,11 +3,9 @@ os: linux
 dist: bionic
 language: rust
 cache:
-  directories:
+  - cargo: true
+  - directories:
   - $TRAVIS_BUILD_DIR/src/target
-  - $HOME/.cargo
-  - $HOME/.cache/sccache
-  - $HOME/.rustup
 install: cargo install sccache
 
 # Docker used in every job
