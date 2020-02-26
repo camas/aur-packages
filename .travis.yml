@@ -2,7 +2,10 @@
 os: linux
 dist: bionic
 language: rust
-cache: cargo
+cache:
+  directories:
+  - $TRAVIS_BUILD_DIR/src/target
+  - $HOME/.cargo
 
 # Docker used in every job
 services:
