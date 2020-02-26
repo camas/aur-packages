@@ -138,7 +138,7 @@ impl PackageManager {
         // Run docker
         trace!("Running docker");
         self.build_image(false)?;
-        let mut args = vec!["docker", "run", "--tmpfs", "/tmp", "--rm"];
+        let mut args = vec!["docker", "run", "--tmpfs", "/tmp:exec", "--rm"];
         if enter_shell {
             args.extend(vec!["--env", "AUR_SHELL=True", "-it"]);
         }
