@@ -63,10 +63,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         let package_name = matches.value_of("package").ok_or("Package not specified")?;
         let package = manager.get_package_by_name(package_name)?;
         let use_shell = matches.is_present("use_shell");
-        match manager.test_package(package, use_shell) {
-            Ok(_) => println!("Tests finished successfully"),
-            Err(e) => println!("Tests failed: {}", e),
-        }
+        manager.test_package(package, use_shell)?;
+        info!("Tests finished successfully");
     } else if let Some(matches) = matches.subcommand_matches("build") {
         let full_build = matches.is_present("full_build");
         manager.build_image(full_build)?;
