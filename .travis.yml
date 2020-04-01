@@ -2,6 +2,7 @@
 os: linux
 dist: bionic
 language: rust
+cache: cargo
 
 # Docker used in every job
 services:
@@ -15,10 +16,10 @@ stages:
 
 # Use matrix expansion to create package jobs
 env:
-  - PACKAGE=atlauncher-git
-  - PACKAGE=python-clicolor
-  - PACKAGE=seclists-c
-  - PACKAGE=ffuf-bin
+  - CACHE_NAME=main PACKAGE=atlauncher-git
+  - CACHE_NAME=main PACKAGE=python-clicolor
+  - CACHE_NAME=main PACKAGE=seclists-c
+  - CACHE_NAME=main PACKAGE=ffuf-bin
 
 # test stage script
 script: ./.travis/test_package.sh
@@ -31,7 +32,7 @@ jobs:
       # Don't build if pull request. Docker credentials won't be available
       if: type != pull_request
       script: ./.travis/build_image.sh
-      env:
+      env: CACHE_NAME=main
     # Delete old docker images
     - stage: image
       language: python
