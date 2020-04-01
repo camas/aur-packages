@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         (about: "AUR Package Manager")
         (setting: AppSettings::ArgRequiredElseHelp)
         (@arg verbosity: -v +multiple "Set error verbosity. Repeatable for higher verbosity")
-        (@arg directory: -d --base-dir +takes_value "Set base dir to use")
+        (@arg directory: -d --("base-dir") +takes_value "Set base dir to use")
         (@subcommand list =>
             (about: "List packages")
         )
@@ -23,6 +23,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         (@subcommand test =>
             (about: "Test a package")
             (@arg use_shell: -s --shell "Enter into a shell after testing")
+            (@arg skip_makepkg: --("skip-makepkg") "Skip building and installing the package in docker")
             (@arg package: +required "The package to test")
         )
         (@subcommand build =>
@@ -63,7 +64,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         let package_name = matches.value_of("package").ok_or("Package not specified")?;
         let package = manager.get_package_by_name(package_name)?;
         let use_shell = matches.is_present("use_shell");
-        manager.test_package(package, use_shell)?;
+        let skip_makepkg = matches.is_present("skip_makepkg");
+        manager.test_package(package, use_shell, skip_makepkg)?;
         info!("Tests finished successfully");
     } else if let Some(matches) = matches.subcommand_matches("build") {
         let full_build = matches.is_present("full_build");

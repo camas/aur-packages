@@ -107,7 +107,12 @@ impl PackageManager {
         Ok(())
     }
 
-    pub fn test_package(&self, package: &Package, enter_shell: bool) -> Result<(), Box<dyn Error>> {
+    pub fn test_package(
+        &self,
+        package: &Package,
+        enter_shell: bool,
+        skip_makepkg: bool,
+    ) -> Result<(), Box<dyn Error>> {
         trace!("Testing package {}", package.get_name());
 
         // Test 1: Shellcheck PKGBUILD
@@ -136,14 +141,16 @@ impl PackageManager {
 
         // Test 2: Install inside docker container
         // Run docker
-        trace!("Running docker");
-        self.build_image(false)?;
-        let mut args = vec!["docker", "run", "--tmpfs", "/tmp:exec", "--rm"];
-        if enter_shell {
-            args.extend(vec!["--env", "AUR_SHELL=True", "-it"]);
+        if !skip_makepkg {
+            trace!("Running docker");
+            self.build_image(false)?;
+            let mut args = vec!["docker", "run", "--tmpfs", "/tmp:exec", "--rm"];
+            if enter_shell {
+                args.extend(vec!["--env", "AUR_SHELL=True", "-it"]);
+            }
+            args.extend(vec![DOCKER_TAG, "package_tester", package.get_name()]);
+            run_command_no_capture("sudo", &args)?;
         }
-        args.extend(vec![DOCKER_TAG, "package_tester", package.get_name()]);
-        run_command_no_capture("sudo", &args)?;
 
         Ok(())
     }

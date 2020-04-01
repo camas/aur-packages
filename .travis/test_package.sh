@@ -16,4 +16,8 @@ docker pull camas/aur-ci:"$TRAVIS_BUILD_ID"
 docker tag camas/aur-ci:"$TRAVIS_BUILD_ID" camas/aur-packages
 
 # Run tests
-./packager -vvvv test "$PACKAGE"
+if [ -v SKIP_MAKEPKG ]; then
+    ./packager -vvvv test --skip-makepkg "$PACKAGE"
+else
+    ./packager -vvvv test "$PACKAGE"
+fi

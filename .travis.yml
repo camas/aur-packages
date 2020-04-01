@@ -18,7 +18,7 @@ stages:
 env:
   - CACHE_NAME=main PACKAGE=atlauncher-git
   - CACHE_NAME=main PACKAGE=python-clicolor
-  - CACHE_NAME=main PACKAGE=seclists-c
+  - CACHE_NAME=main PACKAGE=seclists-c SKIP_MAKEPKG=
   - CACHE_NAME=main PACKAGE=ffuf-bin
 
 # test stage script
