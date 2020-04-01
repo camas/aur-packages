@@ -7,9 +7,9 @@ set -x
 set -e
 
 # Build packager
-cargo build --release --manifest-path src/Cargo.toml
-cp src/target/release/packager packager
-cp src/target/release/package_tester image/package_tester
+cargo build --manifest-path src/Cargo.toml
+cp src/target/debug/packager packager
+cp src/target/debug/package_tester image/package_tester
 
 # Pull latest image to save on compile time
 docker pull camas/aur-ci:"$TRAVIS_BUILD_ID"
