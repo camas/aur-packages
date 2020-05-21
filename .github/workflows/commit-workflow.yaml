@@ -1,0 +1,31 @@
+# Builds and tests the rust projects used to test the packages
+
+name: build-rust
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+    - 'packager/**'
+    - 'packager-lib/**'
+    - 'tester/**'
+    - 'Cargo.*'
+  pull_request:
+    branches: [ master ]
+    paths-ignore:
+    - 'packager/**'
+    - 'packager-lib/**'
+    - 'tester/**'
+    - 'Cargo.*'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build
+      run: cargo build --verbose
+    - name: Run tests
+      run: cargo test --verbose

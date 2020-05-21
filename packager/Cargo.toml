@@ -6,6 +6,4 @@ edition = "2018"
 
 [dependencies]
 packager-lib = { path = "../packager-lib" }
-tester = { path = "../tester" }
 clap = "*"
-ansi_term = "*"

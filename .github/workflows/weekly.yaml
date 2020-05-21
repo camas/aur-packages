@@ -1,0 +1,40 @@
+# Builds and tests the rust projects used to test the packages
+
+name: test-packages
+
+on:
+#  schedule:
+#    - cron: '0 2 * * 3' # Every wednesday at 02:00
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build Rust
+      run: cargo build --verbose
+    - name: Build Docker
+      run: cargo run --bin packager -- build --full
+      env:
+        MIRRORLIST_COUNTRY: US
+    - uses: actions/upload-artifact@v2
+      with:
+        path: target/debug/packager
+    - run: echo ${{ secrets.GITHUB_TOKEN }} | docker login https://docker.pkg.github.com/ -u $GITHUB_ACTOR --password-stdin
+    - run: docker tag camas/aur-packages docker.pkg.github.com/$GITHUB_REPOSITORY/image && docker push docker.pkg.github.com/$GITHUB_REPOSITORY/image
+  test:
+    strategy:
+      matrix:
+        package: ["atlauncher-git", "ffuf-bin", "python-clicolor", "seclists-c"]
+    runs-on: ubuntu-latest
+    needs: build
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/download-artifact@v2
+    - run: ls -alhR
+    - run: echo ${{ secrets.GITHUB_TOKEN }} | docker login https://docker.pkg.github.com/ -u $GITHUB_ACTOR --password-stdin
+    - run: docker pull docker.pkg.github.com/$GITHUB_REPOSITORY/image && docker tag docker.pkg.github.com/$GITHUB_REPOSITORY/image camas/aur-packages
+    - run: chmod +x artifact/packager && artifact/packager test --skip-build ${{ matrix.package }}

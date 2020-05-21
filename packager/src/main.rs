@@ -1,4 +1,3 @@
-use ansi_term::Style;
 use clap::{clap_app, crate_authors, crate_version, AppSettings};
 use packager_lib::{run_command, run_command_no_capture, Package, PackageManager};
 use std::io::Write;
@@ -24,6 +23,7 @@ fn main() {
         (@subcommand test =>
             (about: "Test a package")
             (@arg use_shell: -s --shell "Enter into a shell after testing")
+            (@arg skip_build: --("skip-build") "Skip building the docker container")
             (@arg skip_makepkg: --("skip-makepkg") "Skip building and installing the package in docker")
             (@arg package: +required "The package to test")
         )
@@ -57,7 +57,8 @@ fn main() {
             .expect("Package not found");
         let use_shell = matches.is_present("use_shell");
         let skip_makepkg = matches.is_present("skip_makepkg");
-        test_package(package_dir, package, use_shell, skip_makepkg);
+        let skip_build = matches.is_present("skip_build");
+        test_package(package_dir, package, use_shell, skip_makepkg, skip_build);
     } else if let Some(matches) = matches.subcommand_matches("build") {
         let full_build = matches.is_present("full_build");
         build_image(base_dir, full_build);
@@ -140,9 +141,8 @@ fn print_header(manager: PackageManager) {
     ];
 
     // Style and print
-    let bold = Style::new().bold();
     for line in lines.iter() {
-        println!(" {:^80} ", format!("{}", bold.paint(*line)));
+        println!("\x1B[1m {:^72} \x1B[0m", line);
     }
     // Lower number 72 as bold text has invisible chars
     for line in name_lines {
@@ -156,6 +156,7 @@ pub fn test_package(
     package: &Package,
     enter_shell: bool,
     skip_makepkg: bool,
+    skip_build: bool,
 ) {
     let package_dir = package_dir.as_ref();
 
@@ -187,7 +188,9 @@ pub fn test_package(
     // Test 2: Install inside docker container
     // Run docker
     if !skip_makepkg {
-        build_image(package_dir.parent().unwrap(), false);
+        if !skip_build {
+            build_image(package_dir.parent().unwrap(), false);
+        }
         let mut args = vec!["docker", "run", "--tmpfs", "/tmp:exec", "--rm"];
         if enter_shell {
             args.extend(vec!["--env", "AUR_SHELL=True", "-it"]);

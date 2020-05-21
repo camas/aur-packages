@@ -35,13 +35,3 @@ impl PackageManager {
         &self.packages
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_working() {
-        PackageManager::from_dir("packages");
-    }
-}
