@@ -3,10 +3,8 @@
 name: test-packages
 
 on:
-#  schedule:
-#    - cron: '0 2 * * 3' # Every wednesday at 02:00
-  push:
-    branches: [ master ]
+  schedule:
+    - cron: '0 12 * * 3' # Every wednesday at 12:00
 
 jobs:
   build:
