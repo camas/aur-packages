@@ -1,0 +1,9 @@
+[package]
+name = "tester"
+version = "0.1.0"
+authors = ["camas <camas@users.noreply.github.com>"]
+edition = "2018"
+
+[dependencies]
+clap = "*"
+packager-lib = { path = "../packager-lib" }

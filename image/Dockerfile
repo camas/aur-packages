@@ -21,6 +21,9 @@ RUN sed -i "s/PKGEXT=.*/PKGEXT='.pkg.tar'/" /etc/makepkg.conf && \
     sed -i "s/#MAKEFLAGS=.*/MAKEFLAGS=\"-j\$(( \$(nproc) + 1 ))\"/" /etc/makepkg.conf && \
     sed -i "s/OPTIONS\=[(]strip/OPTIONS\=(\!strip/" /etc/makepkg.conf
 
+# Download test packages but don't install
+RUN mkdir /pacman-cache && pacman -Sw --noconfirm --cachedir "/pacman-cache" namcap
+
 # Add build user with sudo rights
 RUN useradd -ms /bin/bash builduser && \
     echo "builduser ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builduser
@@ -28,11 +31,17 @@ RUN useradd -ms /bin/bash builduser && \
 # Set user to build user
 USER builduser
 
-# Download test packages but don't install
-# RUN yay -S --downloadonly --noconfirm namcap shellcheck-static
+# Install yay
+RUN sudo mkdir -m 777 /yay
+WORKDIR /yay
+RUN curl 'https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=yay-bin' -o PKGBUILD && \
+    makepkg -d && \
+    sudo pacman -U --noconfirm --assume-installed git yay-bin*.pkg.tar
+WORKDIR /
+RUN sudo rm -r /yay
 
 # Copy package files
 COPY --chown=builduser packages packages
 
 # Copy test executable
-COPY --chown=builduser image/package_tester /usr/local/bin/package_tester
+COPY --chown=builduser target/debug/tester /usr/local/bin/tester

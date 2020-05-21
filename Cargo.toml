@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "packager",
+    "tester",
+    "packager-lib",
+]

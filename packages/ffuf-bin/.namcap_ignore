@@ -1,0 +1,3 @@
+ffuf-bin W: ELF file ('usr/bin/ffuf') lacks FULL RELRO, check LDFLAGS.
+ffuf-bin W: ELF file ('usr/bin/ffuf') lacks PIE.
+ffuf-bin E: Dependency glibc detected and not included (libraries ['usr/lib/libc.so.6', 'usr/lib/libpthread.so.0'] needed in files ['usr/bin/ffuf'])

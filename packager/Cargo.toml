@@ -1,0 +1,11 @@
+[package]
+name = "packager"
+version = "0.1.0"
+authors = ["camas <camas@users.noreply.github.com>"]
+edition = "2018"
+
+[dependencies]
+packager-lib = { path = "../packager-lib" }
+tester = { path = "../tester" }
+clap = "*"
+ansi_term = "*"
